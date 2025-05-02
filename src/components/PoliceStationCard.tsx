@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PoliceStation } from '@/models/types';
-import { MapPin, Phone, Mail, Police } from 'lucide-react';
+import { MapPin, Phone, Mail, Shield } from 'lucide-react';
 
 interface PoliceStationCardProps {
   station: PoliceStation;
@@ -17,7 +17,7 @@ const PoliceStationCard: React.FC<PoliceStationCardProps> = ({ station }) => {
           <CardTitle className="text-lg font-bold text-police-dark">{station.name}</CardTitle>
         </div>
         <CardDescription className="flex items-center text-gray-600">
-          <Police className="h-4 w-4 mr-1 inline" />
+          <Shield className="h-4 w-4 mr-1 inline" />
           {station.jurisdiction}
         </CardDescription>
       </CardHeader>

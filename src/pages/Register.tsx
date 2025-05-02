@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Shield, Loader2, User, Police } from 'lucide-react';
+import { Shield, Loader2, User } from 'lucide-react';
 import { useAuth, UserRole } from '@/contexts/AuthContext';
 import MainLayout from '@/layouts/MainLayout';
 
@@ -163,7 +163,7 @@ const Register = () => {
                                 <RadioGroupItem value="police" />
                               </FormControl>
                               <FormLabel className="font-normal flex items-center">
-                                <Police className="h-4 w-4 mr-1" />
+                                <Shield className="h-4 w-4 mr-1" />
                                 Police Officer
                               </FormLabel>
                             </FormItem>
