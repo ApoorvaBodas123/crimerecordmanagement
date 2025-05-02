@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -64,9 +63,9 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				police: {
-					DEFAULT: '#2563eb', // Bright blue
-					light: '#3b82f6',
-					dark: '#1d4ed8',
+					DEFAULT: '#7e3aed', // Purple
+					light: '#9f6bef',
+					dark: '#6d28d9',
 					foreground: '#ffffff'
 				},
 				alert: {
@@ -81,7 +80,7 @@ export default {
 					border: '#4b5563',
 					text: '#f3f4f6',
 					text2: '#d1d5db',
-					accent: '#3b82f6'
+					accent: '#7e3aed'
 				}
 			},
 			borderRadius: {

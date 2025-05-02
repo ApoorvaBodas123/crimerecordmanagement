@@ -14,7 +14,7 @@
     --popover: 215 28% 17%;
     --popover-foreground: 210 20% 98%;
 
-    --primary: 210 100% 40%;
+    --primary: 270 50% 40%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 215 25% 27%;
@@ -55,7 +55,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 223 82% 23%;
+    --primary: 270 50% 40%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -87,7 +87,7 @@
 
 @layer base {
   * {
-    @apply border-border selection:bg-blue-500/20 selection:text-blue-100;
+    @apply border-border selection:bg-purple-500/20 selection:text-purple-100;
   }
 
   body {
@@ -97,7 +97,7 @@
 
 @layer components {
   .police-gradient {
-    @apply bg-gradient-to-r from-blue-800 via-blue-700 to-blue-600;
+    @apply bg-gradient-to-r from-purple-800 via-purple-700 to-purple-600;
   }
   
   .alert-pulse {
