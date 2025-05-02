@@ -64,24 +64,24 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				police: {
-					DEFAULT: '#1a365d', // Navy blue
-					light: '#2c5282',
-					dark: '#0f2942',
+					DEFAULT: '#2563eb', // Bright blue
+					light: '#3b82f6',
+					dark: '#1d4ed8',
 					foreground: '#ffffff'
 				},
 				alert: {
-					DEFAULT: '#e53e3e', // Crimson red
-					light: '#fc8181',
-					dark: '#c53030',
+					DEFAULT: '#dc2626', // Bright red
+					light: '#ef4444',
+					dark: '#b91c1c',
 					foreground: '#ffffff'
 				},
 				dark: {
-					background: '#1A1F2C',
-					card: '#222222',
-					border: '#333333',
-					text: '#FFFFFF',
-					text2: '#CCCCCC',
-					accent: '#0f2942'
+					background: '#1f2937',
+					card: '#2d3748',
+					border: '#4b5563',
+					text: '#f3f4f6',
+					text2: '#d1d5db',
+					accent: '#3b82f6'
 				}
 			},
 			borderRadius: {

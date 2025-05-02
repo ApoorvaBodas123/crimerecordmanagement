@@ -11,18 +11,18 @@ interface PoliceStationCardProps {
 
 const PoliceStationCard: React.FC<PoliceStationCardProps> = ({ station }) => {
   return (
-    <Card className="overflow-hidden border-t-4 border-t-police h-full flex flex-col bg-dark-card border-dark-border">
+    <Card className="overflow-hidden border-t-4 border-t-blue-700 h-full flex flex-col bg-[#2d3748] border-gray-700">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <CardTitle className="text-lg font-bold text-blue-300">{station.name}</CardTitle>
         </div>
-        <CardDescription className="flex items-center text-gray-400">
+        <CardDescription className="flex items-center text-gray-300">
           <Shield className="h-4 w-4 mr-1 inline text-blue-400" />
           {station.jurisdiction}
         </CardDescription>
       </CardHeader>
       <CardContent className="pb-2 flex-grow">
-        <div className="flex flex-col space-y-2 text-gray-300">
+        <div className="flex flex-col space-y-2 text-gray-200">
           <div className="flex items-start">
             <MapPin className="h-4 w-4 mr-2 mt-0.5 text-blue-400" />
             <span>{station.address}</span>
