@@ -74,6 +74,14 @@ export default {
 					light: '#fc8181',
 					dark: '#c53030',
 					foreground: '#ffffff'
+				},
+				dark: {
+					background: '#1A1F2C',
+					card: '#222222',
+					border: '#333333',
+					text: '#FFFFFF',
+					text2: '#CCCCCC',
+					accent: '#0f2942'
 				}
 			},
 			borderRadius: {
