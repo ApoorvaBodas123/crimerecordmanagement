@@ -1,12 +1,13 @@
-
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { toast } from 'sonner';
+import axios from 'axios';
 
 // Define user types
-export type UserRole = 'citizen' | 'police' | 'admin';
+export type UserRole = 'police' | 'admin';
 
 export interface User {
   id: string;
+  userId: string;
   name: string;
   email: string;
   role: UserRole;
@@ -15,92 +16,162 @@ export interface User {
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
-  register: (name: string, email: string, password: string, role: UserRole) => Promise<boolean>;
+  register: (
+    name: string,
+    email: string,
+    password: string,
+    role: UserRole,
+    badgeNumber: string,
+    department: string,
+    phoneNumber: string
+  ) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Mock users for demonstration
-const MOCK_USERS: User[] = [
-  { id: '1', name: 'Admin User', email: 'admin@example.com', role: 'admin' },
-  { id: '2', name: 'Police Officer', email: 'police@example.com', role: 'police' },
-  { id: '3', name: 'Citizen User', email: 'citizen@example.com', role: 'citizen' }
-];
+const API_URL = 'http://localhost:5000/api';
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for saved session
-    const savedUser = localStorage.getItem('civicEyeUser');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
+    // Check for saved token and fetch user data
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetchUserData(token);
+    } else {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }, []);
+
+  const fetchUserData = async (token: string) => {
+    try {
+      const response = await axios.get(`${API_URL}/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const userData = response.data;
+      setUser({
+        id: userData._id,
+        userId: userData._id,
+        name: userData.name,
+        email: userData.email,
+        role: userData.role
+      });
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      localStorage.removeItem('token');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
-    
-    // Simulate API call
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const foundUser = MOCK_USERS.find(u => u.email === email);
-        
-        if (foundUser && password === 'password') {  // Simple mock auth
-          setUser(foundUser);
-          localStorage.setItem('civicEyeUser', JSON.stringify(foundUser));
-          toast.success(`Welcome back, ${foundUser.name}`);
-          resolve(true);
-        } else {
-          toast.error("Invalid email or password");
-          resolve(false);
-        }
-        setIsLoading(false);
-      }, 1000);
-    });
+    try {
+      const response = await axios.post(`${API_URL}/auth/login`, {
+        email,
+        password
+      });
+      
+      if (!response.data.token || !response.data.user) {
+        throw new Error('Invalid response from server');
+      }
+
+      const { token, user: userData } = response.data;
+      localStorage.setItem('token', token);
+      setUser({
+        id: userData._id || userData.id,
+        userId: userData._id || userData.id,
+        name: userData.name,
+        email: userData.email,
+        role: userData.role
+      });
+      toast.success(`Welcome back, ${userData.name}`);
+      return true;
+    } catch (error: any) {
+      console.error('Login error:', error);
+      const message = error.response?.data?.message || 'Invalid email or password';
+      toast.error(message);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const register = async (name: string, email: string, password: string, role: UserRole): Promise<boolean> => {
+  const register = async (
+    name: string,
+    email: string,
+    password: string,
+    role: UserRole,
+    badgeNumber: string,
+    department: string,
+    phoneNumber: string
+  ): Promise<boolean> => {
     setIsLoading(true);
-    
-    // Simulate API call
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const existingUser = MOCK_USERS.find(u => u.email === email);
-        
-        if (existingUser) {
-          toast.error("Email already in use");
-          resolve(false);
-        } else {
-          const newUser: User = {
-            id: `${MOCK_USERS.length + 1}`,
-            name,
-            email,
-            role
-          };
-          
-          // In a real app, we would save this to a database
-          // This is just for demonstration purposes
-          MOCK_USERS.push(newUser);
-          setUser(newUser);
-          localStorage.setItem('civicEyeUser', JSON.stringify(newUser));
-          toast.success("Registration successful");
-          resolve(true);
-        }
-        setIsLoading(false);
-      }, 1000);
-    });
+    try {
+      const response = await axios.post(`${API_URL}/auth/register`, {
+        name,
+        email,
+        password,
+        role,
+        badgeNumber,
+        department,
+        phoneNumber
+      });
+      
+      if (!response.data.token || !response.data.user) {
+        throw new Error('Invalid response from server');
+      }
+
+      const { token, user: userData } = response.data;
+      localStorage.setItem('token', token);
+      setUser({
+        id: userData._id || userData.id,
+        userId: userData._id || userData.id,
+        name: userData.name,
+        email: userData.email,
+        role: userData.role
+      });
+      toast.success('Registration successful');
+      return true;
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      const message = error.response?.data?.message || 'Failed to register';
+      toast.error(message);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const logout = () => {
-    localStorage.removeItem('civicEyeUser');
+    localStorage.removeItem('token');
     setUser(null);
-    toast.info("You have been logged out");
+    toast.info('You have been logged out');
   };
+
+  // Add axios interceptor for token
+  useEffect(() => {
+    const interceptor = axios.interceptors.request.use(
+      config => {
+        const token = localStorage.getItem('token');
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      },
+      error => {
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+      axios.interceptors.request.eject(interceptor);
+    };
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, login, register, logout, isLoading }}>

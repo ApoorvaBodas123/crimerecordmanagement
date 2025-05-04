@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CrimeRecord } from '@/models/types';
+import { CrimeRecord, CrimeStatus, CrimeCategory } from '@/models/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { Calendar, MapPin, AlertCircle, Trash2 } from 'lucide-react';
 
@@ -12,34 +11,34 @@ interface CrimeCardProps {
   onDelete?: (id: string) => void;
 }
 
-const getStatusColor = (status: string) => {
+const getStatusColor = (status: CrimeStatus) => {
   switch (status) {
-    case 'Open':
+    case 'reported':
       return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-    case 'Under Investigation':
+    case 'under_investigation':
       return 'bg-blue-100 text-blue-800 border-blue-200';
-    case 'Closed':
+    case 'closed':
       return 'bg-gray-100 text-gray-800 border-gray-200';
-    case 'Resolved':
+    case 'resolved':
       return 'bg-green-100 text-green-800 border-green-200';
     default:
       return 'bg-gray-100 text-gray-800 border-gray-200';
   }
 };
 
-const getCategoryColor = (category: string) => {
-  switch (category) {
-    case 'Theft':
+const getCategoryColor = (type: CrimeCategory) => {
+  switch (type) {
+    case 'theft':
       return 'bg-red-100 text-red-800 border-red-200';
-    case 'Assault':
+    case 'assault':
       return 'bg-orange-100 text-orange-800 border-orange-200';
-    case 'Fraud':
+    case 'fraud':
       return 'bg-purple-100 text-purple-800 border-purple-200';
-    case 'Vandalism':
+    case 'vandalism':
       return 'bg-blue-100 text-blue-800 border-blue-200';
-    case 'Burglary':
+    case 'burglary':
       return 'bg-red-100 text-red-800 border-red-200';
-    default:
+    case 'other':
       return 'bg-gray-100 text-gray-800 border-gray-200';
   }
 };
@@ -59,13 +58,13 @@ const CrimeCard: React.FC<CrimeCardProps> = ({ crime, onDelete }) => {
         <div className="flex justify-between items-start">
           <CardTitle className="text-lg font-bold text-police-dark">{crime.title}</CardTitle>
           <div className="flex gap-2">
-            <Badge className={getCategoryColor(crime.category)}>{crime.category}</Badge>
+            <Badge className={getCategoryColor(crime.type)}>{crime.type}</Badge>
             <Badge className={getStatusColor(crime.status)}>{crime.status}</Badge>
           </div>
         </div>
         <CardDescription className="flex items-center text-gray-600">
           <MapPin className="h-4 w-4 mr-1 inline" />
-          {crime.location}
+          {crime.location.address}
         </CardDescription>
       </CardHeader>
       <CardContent className="pb-2 flex-grow">
@@ -73,13 +72,13 @@ const CrimeCard: React.FC<CrimeCardProps> = ({ crime, onDelete }) => {
         <div className="flex flex-col space-y-1 text-xs text-gray-500">
           <div className="flex items-center">
             <Calendar className="h-3 w-3 mr-1" />
-            <span>Reported: {formatDate(crime.dateReported)}</span>
+            <span>Reported: {formatDate(crime.createdAt)}</span>
           </div>
           <div className="flex items-center">
             <Calendar className="h-3 w-3 mr-1" />
-            <span>Occurred: {formatDate(crime.dateOccurred)}</span>
+            <span>Occurred: {formatDate(crime.timeOfOccurrence)}</span>
           </div>
-          {crime.assignedOfficer && (
+          {crime.assignedTo && (
             <div className="flex items-center">
               <AlertCircle className="h-3 w-3 mr-1" />
               <span>Officer Assigned</span>

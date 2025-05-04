@@ -1,73 +1,90 @@
-# Welcome to your Lovable project
+# Civic Eye Guardian System
 
-## Project info
+A web application for managing civic security and monitoring, built with React, Node.js, Express, and MongoDB.
 
-**URL**: https://lovable.dev/projects/2a3738cc-6ccc-43f8-8b01-a1adf76dd7e2
+## Features
 
-## How can I edit this code?
+- User authentication with role-based access control
+- Different dashboards for Admin, Police Officers, and Citizens
+- Secure API endpoints
+- Modern UI with Tailwind CSS
 
-There are several ways of editing your application.
+## Prerequisites
 
-**Use Lovable**
+- Node.js (v14 or higher)
+- MongoDB (local or Atlas)
+- npm or yarn
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/2a3738cc-6ccc-43f8-8b01-a1adf76dd7e2) and start prompting.
+## Setup
 
-Changes made via Lovable will be committed automatically to this repo.
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd civic-eye-guardian-system
+```
 
-**Use your preferred IDE**
+2. Install dependencies:
+```bash
+npm install
+```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+3. Create a `.env` file in the root directory with the following variables:
+```
+MONGODB_URI=mongodb://localhost:27017/civic-eye
+JWT_SECRET=your-secret-key-here
+PORT=5000
+```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+4. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+5. Start the backend server (in a separate terminal):
+```bash
+npm run start
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Project Structure
 
-**Use GitHub Codespaces**
+```
+├── server/                 # Backend server code
+│   ├── controllers/       # Route controllers
+│   ├── models/           # Database models
+│   ├── routes/           # API routes
+│   ├── middleware/       # Custom middleware
+│   └── server.js         # Server entry point
+├── src/                  # Frontend React code
+│   ├── components/       # React components
+│   ├── context/         # React context providers
+│   └── App.js           # Main application component
+├── public/              # Static files
+└── package.json         # Project dependencies
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Available Scripts
 
-## What technologies are used for this project?
+- `npm run dev` - Start the frontend development server
+- `npm run start` - Start the backend server
+- `npm run build` - Build the frontend for production
+- `npm run lint` - Run ESLint
 
-This project is built with:
+## Authentication
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+The application supports three types of users:
+1. Admin - Full system access
+2. Police Officer - Access to police-specific features
+3. Citizen - Access to citizen-specific features
 
-## How can I deploy this project?
+## Contributing
 
-Simply open [Lovable](https://lovable.dev/projects/2a3738cc-6ccc-43f8-8b01-a1adf76dd7e2) and click on Share -> Publish.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## Can I connect a custom domain to my Lovable project?
+## License
 
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+This project is licensed under the MIT License - see the LICENSE file for details.
+# crimerecordmanagement

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import MainLayout from '@/layouts/MainLayout';
 import { Button } from '@/components/ui/button';
@@ -9,171 +8,153 @@ import CrimeCard from '@/components/CrimeCard';
 import SafetyTipCard from '@/components/SafetyTipCard';
 import { useData } from '@/contexts/DataContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { Shield, AlertTriangle, FileText, Users, Phone } from 'lucide-react';
+import { Shield, AlertTriangle, FileText, Users, Phone, Bell, MapPin } from 'lucide-react';
 
 const Index = () => {
-  const { crimeRecords, safetyTips } = useData();
+  const { crimeRecords = [], safetyTips = [] } = useData();
   const { user } = useAuth();
   
   // Get the most recent 3 crime records
-  const recentCrimes = [...crimeRecords]
-    .sort((a, b) => new Date(b.dateReported).getTime() - new Date(a.dateReported).getTime())
-    .slice(0, 3);
+  const recentCrimes = Array.isArray(crimeRecords) 
+    ? [...crimeRecords]
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .slice(0, 3)
+    : [];
   
   // Get the 3 most recent safety tips
-  const recentTips = [...safetyTips]
-    .sort((a, b) => new Date(b.datePosted).getTime() - new Date(a.datePosted).getTime())
-    .slice(0, 3);
+  const recentTips = Array.isArray(safetyTips)
+    ? [...safetyTips]
+        .sort((a, b) => new Date(b.datePosted).getTime() - new Date(a.datePosted).getTime())
+        .slice(0, 3)
+    : [];
 
   return (
-    <MainLayout>
+    <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-police-gradient text-white py-16">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row md:items-center">
-            <div className="md:w-1/2 mb-8 md:mb-0">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                Civic Eye Guardian System
-              </h1>
-              <p className="text-lg mb-6">
-                Strengthening communities through transparency, safety, and vigilance. Your partner in creating a safer environment.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                {!user && (
-                  <Button asChild size="lg" className="bg-white text-police hover:bg-gray-100">
-                    <Link to="/register">Register Now</Link>
-                  </Button>
-                )}
-                <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-police">
-                  <Link to="/about">Learn More</Link>
-                </Button>
+      <div className="relative bg-white overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="relative z-10 pb-8 bg-white sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
+            <main className="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
+              <div className="sm:text-center lg:text-left">
+                <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+                  <span className="block">CivicEye - Your</span>
+                  <span className="block text-blue-600">Community Safety Partner</span>
+                </h1>
+                <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
+                  A comprehensive platform for police officers and administrators to manage community safety, track incidents, and maintain public directories.
+                </p>
+                <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
+                  <div className="rounded-md shadow">
+                    <Link to="/register">
+                      <Button className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10">
+                        Get Started
+                      </Button>
+                    </Link>
+                  </div>
+                  <div className="mt-3 sm:mt-0 sm:ml-3">
+                    <Link to="/login">
+                      <Button variant="outline" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 md:py-4 md:text-lg md:px-10">
+                        Sign In
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="md:w-1/2 flex justify-center">
-              <div className="max-w-md">
-                <SosButton />
-              </div>
-            </div>
+            </main>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* Features Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-police-dark">Key Features</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="border-t-4 border-t-police">
-              <CardHeader>
-                <Shield className="h-10 w-10 text-police mb-2" />
-                <CardTitle>Crime Records</CardTitle>
-                <CardDescription>Access and view the latest crime data in your area</CardDescription>
-              </CardHeader>
-              <CardContent>
-                Police officers can add, update, and manage criminal records while citizens can stay informed about crime activity.
-              </CardContent>
-              <CardFooter>
-                <Button asChild className="w-full">
-                  <Link to="/crimes">View Crime Records</Link>
-                </Button>
-              </CardFooter>
-            </Card>
-            
-            <Card className="border-t-4 border-t-police">
-              <CardHeader>
-                <Users className="h-10 w-10 text-police mb-2" />
-                <CardTitle>Police Directory</CardTitle>
-                <CardDescription>Connect with your local police force</CardDescription>
-              </CardHeader>
-              <CardContent>
-                Find information about police stations and officers in your area, including contact details and specializations.
-              </CardContent>
-              <CardFooter>
-                <Button asChild className="w-full">
-                  <Link to="/directory">Browse Directory</Link>
-                </Button>
-              </CardFooter>
-            </Card>
-            
-            <Card className="border-t-4 border-t-alert">
-              <CardHeader>
-                <AlertTriangle className="h-10 w-10 text-alert mb-2" />
-                <CardTitle>Emergency SOS</CardTitle>
-                <CardDescription>One-click alert system for emergencies</CardDescription>
-              </CardHeader>
-              <CardContent>
-                Send your location to nearby police stations with a single click in case of emergency situations.
-              </CardContent>
-              <CardFooter>
-                <Button asChild className="w-full bg-alert hover:bg-alert-dark">
-                  <Link to="/sos">Emergency SOS</Link>
-                </Button>
-              </CardFooter>
-            </Card>
+      <div className="py-12 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="lg:text-center">
+            <h2 className="text-base text-blue-600 font-semibold tracking-wide uppercase">Features</h2>
+            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+              Everything you need to manage community safety
+            </p>
           </div>
-        </div>
-      </section>
 
-      {/* Recent Cases & Safety Tips */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Recent Cases */}
-            <div>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-police-dark">Recent Crime Reports</h2>
-                <Button asChild variant="outline">
-                  <Link to="/crimes">View All</Link>
-                </Button>
+          <div className="mt-10">
+            <div className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+              <div className="relative">
+                <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white">
+                  <Shield className="h-6 w-6" />
+                </div>
+                <div className="ml-16">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900">Incident Management</h3>
+                  <p className="mt-2 text-base text-gray-500">
+                    Track and manage incidents efficiently with our comprehensive dashboard.
+                  </p>
+                </div>
               </div>
-              
-              <div className="grid grid-cols-1 gap-6">
-                {recentCrimes.map((crime) => (
-                  <CrimeCard key={crime.id} crime={crime} />
-                ))}
+
+              <div className="relative">
+                <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white">
+                  <Users className="h-6 w-6" />
+                </div>
+                <div className="ml-16">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900">Public Directory</h3>
+                  <p className="mt-2 text-base text-gray-500">
+                    Maintain an up-to-date directory of community members and resources.
+                  </p>
+                </div>
               </div>
-            </div>
-            
-            {/* Safety Tips */}
-            <div>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-green-700">Safety Tips</h2>
-                <Button asChild variant="outline" className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white">
-                  <Link to="/safety-tips">View All</Link>
-                </Button>
+
+              <div className="relative">
+                <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white">
+                  <Bell className="h-6 w-6" />
+                </div>
+                <div className="ml-16">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900">Real-time Alerts</h3>
+                  <p className="mt-2 text-base text-gray-500">
+                    Receive instant notifications about important events and incidents.
+                  </p>
+                </div>
               </div>
-              
-              <div className="grid grid-cols-1 gap-6">
-                {recentTips.map((tip) => (
-                  <SafetyTipCard key={tip.id} tip={tip} />
-                ))}
+
+              <div className="relative">
+                <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white">
+                  <MapPin className="h-6 w-6" />
+                </div>
+                <div className="ml-16">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900">Location Tracking</h3>
+                  <p className="mt-2 text-base text-gray-500">
+                    Monitor and track incidents with precise location data.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Call to Action */}
-      <section className="py-16 bg-gray-900 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-6">Ready to help make your community safer?</h2>
-          <p className="text-xl mb-8 max-w-3xl mx-auto">
-            Join the Civic Eye Guardian System to stay informed and contribute to the safety of your neighborhood.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            {!user && (
-              <Button asChild size="lg" className="bg-white text-police-dark hover:bg-gray-100">
-                <Link to="/register">Register Now</Link>
-              </Button>
-            )}
-            <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900">
-              <Link to="/contact">Contact Us</Link>
-            </Button>
+      {/* CTA Section */}
+      <div className="bg-blue-50">
+        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center lg:justify-between">
+          <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+            <span className="block">Ready to get started?</span>
+            <span className="block text-blue-600">Join CivicEye today.</span>
+          </h2>
+          <div className="mt-8 flex lg:mt-0 lg:flex-shrink-0">
+            <div className="inline-flex rounded-md shadow">
+              <Link to="/register">
+                <Button className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                  Get started
+                </Button>
+              </Link>
+            </div>
+            <div className="ml-3 inline-flex rounded-md shadow">
+              <Link to="/login">
+                <Button variant="outline" className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-blue-50">
+                  Sign in
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
-      </section>
-    </MainLayout>
+      </div>
+    </div>
   );
 };
 

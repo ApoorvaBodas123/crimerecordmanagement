@@ -1,6 +1,5 @@
-
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,30 +14,42 @@ import MainLayout from '@/layouts/MainLayout';
 
 // Define the form schema
 const formSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 const Login = () => {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
-  
+  const location = useLocation();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
-  const { isSubmitting } = form.formState;
+  // If user is already logged in, redirect to dashboard
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const onSubmit = async (values: FormValues) => {
-    const success = await login(values.email, values.password);
-    if (success) {
-      navigate('/');
+    try {
+      const success = await login(values.email, values.password);
+      if (success) {
+        // Get the redirect path from location state or default to dashboard
+        const from = location.state?.from?.pathname || '/dashboard';
+        navigate(from, { replace: true });
+      }
+    } catch (err) {
+      form.setError('root', {
+        message: 'Failed to log in. Please try again.',
+      });
     }
   };
 
@@ -59,6 +70,11 @@ const Login = () => {
             <CardContent>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                  {form.formState.errors.root && (
+                    <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">
+                      {form.formState.errors.root.message}
+                    </div>
+                  )}
                   <FormField
                     control={form.control}
                     name="email"
@@ -68,7 +84,9 @@ const Login = () => {
                         <FormControl>
                           <Input placeholder="you@example.com" {...field} />
                         </FormControl>
-                        <FormMessage />
+                        {form.formState.errors.email && (
+                          <FormMessage />
+                        )}
                       </FormItem>
                     )}
                   />
@@ -82,7 +100,9 @@ const Login = () => {
                         <FormControl>
                           <Input type="password" placeholder="••••••••" {...field} />
                         </FormControl>
-                        <FormMessage />
+                        {form.formState.errors.password && (
+                          <FormMessage />
+                        )}
                       </FormItem>
                     )}
                   />
@@ -93,14 +113,18 @@ const Login = () => {
                     </Link>
                   </div>
                   
-                  <Button type="submit" className="w-full" disabled={isSubmitting}>
-                    {isSubmitting ? (
+                  <Button 
+                    type="submit" 
+                    className="w-full"
+                    disabled={form.formState.isSubmitting}
+                  >
+                    {form.formState.isSubmitting ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Logging in...
+                        Signing in...
                       </>
                     ) : (
-                      "Sign In"
+                      'Sign In'
                     )}
                   </Button>
                 </form>

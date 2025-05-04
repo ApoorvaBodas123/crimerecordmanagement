@@ -1,47 +1,37 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import MainLayout from '@/layouts/MainLayout';
+import HomePage from '@/pages/HomePage';
+import LoginPage from '@/pages/LoginPage';
+import RegisterPage from '@/pages/RegisterPage';
+import CrimesPage from '@/pages/CrimesPage';
+import DirectoryPage from '@/pages/DirectoryPage';
+import AboutPage from '@/pages/AboutPage';
+import SosPage from '@/pages/SosPage';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { DataProvider } from '@/contexts/DataContext';
+import { Toaster } from 'sonner';
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import CrimesPage from "./pages/CrimesPage";
-import DirectoryPage from "./pages/DirectoryPage";
-import AboutPage from "./pages/AboutPage";
-import ContactPage from "./pages/ContactPage";
-import SosPage from "./pages/SosPage";
-import { AuthProvider } from "./contexts/AuthContext";
-import { DataProvider } from "./contexts/DataContext";
-
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <AuthProvider>
-        <DataProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/crimes" element={<CrimesPage />} />
-              <Route path="/directory" element={<DirectoryPage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="/sos" element={<SosPage />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </DataProvider>
-      </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  return (
+    <AuthProvider>
+      <DataProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/crimes" element={<CrimesPage />} />
+            <Route path="/directory" element={<DirectoryPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/sos" element={<SosPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+          <Toaster position="top-right" />
+        </Router>
+      </DataProvider>
+    </AuthProvider>
+  );
+};
 
 export default App;
