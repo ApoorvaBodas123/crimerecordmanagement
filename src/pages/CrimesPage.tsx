@@ -262,82 +262,87 @@ const CrimesPage = () => {
         
         {/* Add Crime Dialog */}
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="sm:max-w-[600px] bg-white border-2 border-police shadow-2xl">
+          <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold text-police-dark">Add New Crime Record</DialogTitle>
-              <DialogDescription className="text-gray-600">
-                Fill in the details below to add a new crime record to the system.
+              <DialogDescription>
+                Fill in the details of the crime incident. All fields are required.
               </DialogDescription>
             </DialogHeader>
-            
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleAddNewCrime)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Title */}
                   <FormField
                     control={form.control}
                     name="title"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-police-dark font-semibold">Title</FormLabel>
+                      <FormItem className="col-span-2">
+                        <FormLabel>Title</FormLabel>
                         <FormControl>
-                          <Input {...field} className="border-2 focus:border-police focus:ring-police" />
+                          <Input placeholder="Enter crime title" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  
+
+                  {/* Description */}
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem className="col-span-2">
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="Provide detailed description of the crime" 
+                            className="min-h-[100px]"
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Location */}
+                  <FormField
+                    control={form.control}
+                    name="location.address"
+                    render={({ field }) => (
+                      <FormItem className="col-span-2">
+                        <FormLabel>Location</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter crime location" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Type and Severity */}
                   <FormField
                     control={form.control}
                     name="type"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-police-dark font-semibold">Crime Type</FormLabel>
+                        <FormLabel>Crime Type</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <SelectTrigger className="border-2 border-police bg-white text-police-dark hover:bg-gray-50">
+                            <SelectTrigger>
                               <SelectValue placeholder="Select crime type" />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent className="bg-white border-2 border-police">
-                            <SelectItem value="theft" className="text-police-dark hover:bg-police hover:text-white">Theft</SelectItem>
-                            <SelectItem value="assault" className="text-police-dark hover:bg-police hover:text-white">Assault</SelectItem>
-                            <SelectItem value="burglary" className="text-police-dark hover:bg-police hover:text-white">Burglary</SelectItem>
-                            <SelectItem value="vandalism" className="text-police-dark hover:bg-police hover:text-white">Vandalism</SelectItem>
-                            <SelectItem value="fraud" className="text-police-dark hover:bg-police hover:text-white">Fraud</SelectItem>
-                            <SelectItem value="other" className="text-police-dark hover:bg-police hover:text-white">Other</SelectItem>
+                          <SelectContent>
+                            <SelectItem value="theft">Theft</SelectItem>
+                            <SelectItem value="assault">Assault</SelectItem>
+                            <SelectItem value="burglary">Burglary</SelectItem>
+                            <SelectItem value="vandalism">Vandalism</SelectItem>
+                            <SelectItem value="fraud">Fraud</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
                           </SelectContent>
                         </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-police-dark font-semibold">Description</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} className="min-h-[100px] border-2 focus:border-police focus:ring-police" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="location.address"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-police-dark font-semibold">Location Address</FormLabel>
-                        <FormControl>
-                          <Input {...field} className="border-2 focus:border-police focus:ring-police" />
-                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -348,93 +353,92 @@ const CrimesPage = () => {
                     name="severity"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-police-dark font-semibold">Severity</FormLabel>
+                        <FormLabel>Severity</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <SelectTrigger className="border-2 border-police bg-white text-police-dark hover:bg-gray-50">
+                            <SelectTrigger>
                               <SelectValue placeholder="Select severity" />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent className="bg-white border-2 border-police">
-                            <SelectItem value="low" className="text-police-dark hover:bg-police hover:text-white">Low</SelectItem>
-                            <SelectItem value="medium" className="text-police-dark hover:bg-police hover:text-white">Medium</SelectItem>
-                            <SelectItem value="high" className="text-police-dark hover:bg-police hover:text-white">High</SelectItem>
-                            <SelectItem value="critical" className="text-police-dark hover:bg-police hover:text-white">Critical</SelectItem>
+                          <SelectContent>
+                            <SelectItem value="low">Low</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="high">High</SelectItem>
+                            <SelectItem value="critical">Critical</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                </div>
 
-                <div className="bg-gray-50 p-4 rounded-lg border-2 border-gray-200">
-                  <h3 className="text-lg font-semibold text-police-dark mb-4">Victim Information</h3>
-                  <div className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="victim.name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-police-dark font-semibold">Victim Name</FormLabel>
-                          <FormControl>
-                            <Input {...field} className="border-2 focus:border-police focus:ring-police" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  {/* Victim Information */}
+                  <FormField
+                    control={form.control}
+                    name="victim.name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Victim Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter victim name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                    <FormField
-                      control={form.control}
-                      name="victim.contact"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-police-dark font-semibold">Victim Contact</FormLabel>
-                          <FormControl>
-                            <Input {...field} className="border-2 focus:border-police focus:ring-police" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  <FormField
+                    control={form.control}
+                    name="victim.contact"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Victim Contact</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter victim contact" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                    <FormField
-                      control={form.control}
-                      name="victim.description"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-police-dark font-semibold">Victim Description</FormLabel>
-                          <FormControl>
-                            <Textarea {...field} className="min-h-[80px] border-2 focus:border-police focus:ring-police" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
+                  <FormField
+                    control={form.control}
+                    name="victim.description"
+                    render={({ field }) => (
+                      <FormItem className="col-span-2">
+                        <FormLabel>Victim Description</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="Describe the victim's condition" 
+                            className="min-h-[80px]"
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Tool Used and Time */}
                   <FormField
                     control={form.control}
                     name="toolUsed"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-police-dark font-semibold">Tool Used</FormLabel>
+                        <FormLabel>Tool Used</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <SelectTrigger className="border-2 border-police bg-white text-police-dark hover:bg-gray-50">
+                            <SelectTrigger>
                               <SelectValue placeholder="Select tool used" />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent className="bg-white border-2 border-police">
-                            <SelectItem value="weapon" className="text-police-dark hover:bg-police hover:text-white">Weapon</SelectItem>
-                            <SelectItem value="vehicle" className="text-police-dark hover:bg-police hover:text-white">Vehicle</SelectItem>
-                            <SelectItem value="tool" className="text-police-dark hover:bg-police hover:text-white">Tool</SelectItem>
-                            <SelectItem value="chemical" className="text-police-dark hover:bg-police hover:text-white">Chemical</SelectItem>
-                            <SelectItem value="electronic" className="text-police-dark hover:bg-police hover:text-white">Electronic</SelectItem>
-                            <SelectItem value="other" className="text-police-dark hover:bg-police hover:text-white">Other</SelectItem>
+                          <SelectContent>
+                            <SelectItem value="weapon">Weapon</SelectItem>
+                            <SelectItem value="vehicle">Vehicle</SelectItem>
+                            <SelectItem value="tool">Tool</SelectItem>
+                            <SelectItem value="chemical">Chemical</SelectItem>
+                            <SelectItem value="electronic">Electronic</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -447,13 +451,9 @@ const CrimesPage = () => {
                     name="timeOfOccurrence"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-police-dark font-semibold">Time of Occurrence</FormLabel>
+                        <FormLabel>Time of Occurrence</FormLabel>
                         <FormControl>
-                          <Input 
-                            type="datetime-local" 
-                            {...field} 
-                            className="border-2 focus:border-police focus:ring-police" 
-                          />
+                          <Input type="datetime-local" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -461,19 +461,19 @@ const CrimesPage = () => {
                   />
                 </div>
 
-                <DialogFooter className="gap-4 pt-4 border-t">
-                  <Button
-                    type="button"
-                    variant="outline"
+                <DialogFooter className="flex flex-col sm:flex-row gap-2">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
                     onClick={() => setDialogOpen(false)}
-                    className="flex-1 border-2 border-gray-300 hover:bg-gray-100"
+                    className="w-full sm:w-auto"
                   >
                     Cancel
                   </Button>
                   <Button 
                     type="submit" 
+                    className="w-full sm:w-auto"
                     disabled={isSubmitting}
-                    className="flex-1 bg-police hover:bg-police-dark text-white font-semibold py-2"
                   >
                     {isSubmitting ? (
                       <>
