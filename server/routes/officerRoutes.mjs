@@ -6,7 +6,7 @@ import {
   updateOfficer, 
   deleteOfficer 
 } from '../controllers/officerController.mjs';
-import { authenticate } from '../middleware/auth.mjs';
+import auth from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -15,8 +15,8 @@ router.get('/', getOfficers);
 router.get('/:id', getOfficerById);
 
 // Protected routes
-router.post('/', authenticate, createOfficer);
-router.put('/:id', authenticate, updateOfficer);
-router.delete('/:id', authenticate, deleteOfficer);
+router.post('/', auth, createOfficer);
+router.put('/:id', auth, updateOfficer);
+router.delete('/:id', auth, deleteOfficer);
 
 export default router; 
