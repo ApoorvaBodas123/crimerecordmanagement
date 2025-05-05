@@ -203,4 +203,33 @@ router.post('/:id/evidence', auth, async (req, res) => {
   }
 });
 
+// @route   DELETE /api/crimes/:id
+// @desc    Delete a crime
+// @access  Private
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    const crime = await Crime.findById(req.params.id);
+    
+    if (!crime) {
+      return res.status(404).json({ message: 'Crime not found' });
+    }
+
+    // Allow police officers and admins to delete any crime
+    const userRole = req.user.role?.toLowerCase();
+    if (userRole !== 'police' && userRole !== 'admin') {
+      return res.status(403).json({ message: 'Not authorized to delete crime records' });
+    }
+
+    await Crime.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Crime record deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting crime:', error);
+    res.status(500).json({ 
+      message: 'Server error',
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+  }
+});
+
 export default router; 

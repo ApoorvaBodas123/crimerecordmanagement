@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
@@ -7,12 +7,13 @@ import {
   Shield, 
   LogOut, 
   Menu, 
-  X 
+  X
 } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const NavLink: React.FC<{ to: string, children: React.ReactNode }> = ({ to, children }) => {
@@ -30,6 +31,11 @@ const Navbar: React.FC = () => {
         {children}
       </Link>
     );
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
   };
 
   return (
@@ -50,6 +56,14 @@ const Navbar: React.FC = () => {
                     <NavLink to="/directory">Police Directory</NavLink>
                     <NavLink to="/sos">SOS Alerts</NavLink>
                     <NavLink to="/about">About</NavLink>
+                    {user && (user.role.toLowerCase() === 'police' || user.role.toLowerCase() === 'admin') && (
+                      <Link
+                        to="/dashboard"
+                        className="text-white hover:bg-police-light px-3 py-2 rounded-md text-sm font-medium"
+                      >
+                        Dashboard
+                      </Link>
+                    )}
                   </>
                 ) : (
                   <>
@@ -74,7 +88,7 @@ const Navbar: React.FC = () => {
                   <Button 
                     variant="outline" 
                     className="border-white text-white hover:bg-white hover:text-police"
-                    onClick={logout}
+                    onClick={handleLogout}
                   >
                     <LogOut className="h-4 w-4 mr-1" />
                     Logout
@@ -138,6 +152,15 @@ const Navbar: React.FC = () => {
                 >
                   SOS Alerts
                 </Link>
+                {user && (user.role.toLowerCase() === 'police' || user.role.toLowerCase() === 'admin') && (
+                  <Link
+                    to="/dashboard"
+                    className="text-white hover:bg-police-light block px-3 py-2 rounded-md text-base font-medium"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                )}
               </>
             ) : (
               <>
@@ -168,7 +191,7 @@ const Navbar: React.FC = () => {
                 <button
                   className="w-full text-left block text-white hover:bg-police-light px-3 py-2 rounded-md text-base font-medium"
                   onClick={() => {
-                    logout();
+                    handleLogout();
                     setMobileMenuOpen(false);
                   }}
                 >

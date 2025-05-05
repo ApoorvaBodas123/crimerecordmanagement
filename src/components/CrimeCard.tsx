@@ -1,106 +1,141 @@
 import React from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CrimeRecord, CrimeStatus, CrimeCategory } from '@/models/types';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Calendar, MapPin, AlertCircle, Trash2 } from 'lucide-react';
+import { CrimeRecord, Location } from '@/models/types';
+import { FileDown, Trash2 } from 'lucide-react';
 
 interface CrimeCardProps {
   crime: CrimeRecord;
-  onDelete?: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
-const getStatusColor = (status: CrimeStatus) => {
-  switch (status) {
-    case 'reported':
-      return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-    case 'under_investigation':
-      return 'bg-blue-100 text-blue-800 border-blue-200';
-    case 'closed':
-      return 'bg-gray-100 text-gray-800 border-gray-200';
-    case 'resolved':
-      return 'bg-green-100 text-green-800 border-green-200';
-    default:
-      return 'bg-gray-100 text-gray-800 border-gray-200';
-  }
-};
-
-const getCategoryColor = (type: CrimeCategory) => {
-  switch (type) {
-    case 'theft':
-      return 'bg-red-100 text-red-800 border-red-200';
-    case 'assault':
-      return 'bg-orange-100 text-orange-800 border-orange-200';
-    case 'fraud':
-      return 'bg-purple-100 text-purple-800 border-purple-200';
-    case 'vandalism':
-      return 'bg-blue-100 text-blue-800 border-blue-200';
-    case 'burglary':
-      return 'bg-red-100 text-red-800 border-red-200';
-    case 'other':
-      return 'bg-gray-100 text-gray-800 border-gray-200';
-  }
-};
-
 const CrimeCard: React.FC<CrimeCardProps> = ({ crime, onDelete }) => {
+  const navigate = useNavigate();
   const { user } = useAuth();
-  const isPoliceOrAdmin = user && (user.role === 'police' || user.role === 'admin');
-  
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  const isPoliceOrAdmin = user && (user.role.toLowerCase() === 'police' || user.role.toLowerCase() === 'admin');
+  const canDelete = isPoliceOrAdmin || crime.reportedBy === user?.id;
+
+  const getLocationDisplay = (location: Location | string): string => {
+    if (typeof location === 'string') {
+      return location;
+    }
+    return location.address;
   };
 
+  const downloadReport = () => {
+    // Create a formatted report
+    const report = `
+      CRIME REPORT
+      ============
+      
+      Case ID: ${crime.id}
+      Title: ${crime.title}
+      Type: ${crime.type}
+      Location: ${getLocationDisplay(crime.location)}
+      Severity: ${crime.severity}
+      Status: ${crime.status}
+      Date Reported: ${new Date(crime.createdAt).toLocaleDateString()}
+      Time of Occurrence: ${new Date(crime.timeOfOccurrence).toLocaleString()}
+      
+      Description:
+      ${crime.description}
+      
+      Victim Information:
+      Name: ${crime.victim.name}
+      Contact: ${crime.victim.contact}
+      Description: ${crime.victim.description}
+      
+      Tool Used: ${crime.toolUsed}
+      Additional Notes: ${crime.additionalNotes || 'N/A'}
+      
+      Reported by: ${crime.reporterName}
+      Assigned to: ${crime.assignedTo || 'Not assigned'}
+    `;
+
+    // Create a blob and download link
+    const blob = new Blob([report], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `crime_report_${crime.id}_${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  };
+
+  if (!crime) {
+    return null;
+  }
+
   return (
-    <Card className="overflow-hidden border-l-4 border-l-police h-full flex flex-col">
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <CardTitle className="text-lg font-bold text-police-dark">{crime.title}</CardTitle>
-          <div className="flex gap-2">
-            <Badge className={getCategoryColor(crime.type)}>{crime.type}</Badge>
-            <Badge className={getStatusColor(crime.status)}>{crime.status}</Badge>
+    <Card className="mb-4">
+      <CardHeader>
+        <CardTitle className="flex justify-between items-center">
+          <span>{crime.title}</span>
+          <div className="flex space-x-2">
+            {isPoliceOrAdmin && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={downloadReport}
+                className="text-police-dark hover:bg-police-light"
+              >
+                <FileDown className="h-4 w-4 mr-1" />
+                Download Report
+              </Button>
+            )}
+            {canDelete && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => onDelete(crime.id)}
+              >
+                <Trash2 className="h-4 w-4 mr-1" />
+                Delete
+              </Button>
+            )}
+          </div>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <p className="text-sm text-gray-600">Type: {crime.type}</p>
+            <p className="text-sm text-gray-600">
+              Location: {getLocationDisplay(crime.location)}
+            </p>
+            <p className="text-sm text-gray-600">Severity: {crime.severity}</p>
+            <p className="text-sm text-gray-600">Status: {crime.status}</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-600">Reported by: {crime.reporterName}</p>
+            <p className="text-sm text-gray-600">
+              Date: {new Date(crime.createdAt).toLocaleDateString()}
+            </p>
+            <p className="text-sm text-gray-600">
+              Time of Occurrence: {new Date(crime.timeOfOccurrence).toLocaleString()}
+            </p>
           </div>
         </div>
-        <CardDescription className="flex items-center text-gray-600">
-          <MapPin className="h-4 w-4 mr-1 inline" />
-          {crime.location.address}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="pb-2 flex-grow">
-        <p className="text-sm text-gray-700 mb-4">{crime.description}</p>
-        <div className="flex flex-col space-y-1 text-xs text-gray-500">
-          <div className="flex items-center">
-            <Calendar className="h-3 w-3 mr-1" />
-            <span>Reported: {formatDate(crime.createdAt)}</span>
-          </div>
-          <div className="flex items-center">
-            <Calendar className="h-3 w-3 mr-1" />
-            <span>Occurred: {formatDate(crime.timeOfOccurrence)}</span>
-          </div>
-          {crime.assignedTo && (
-            <div className="flex items-center">
-              <AlertCircle className="h-3 w-3 mr-1" />
-              <span>Officer Assigned</span>
-            </div>
-          )}
+        <div className="mt-4">
+          <p className="text-sm text-gray-600">Description:</p>
+          <p className="text-sm">{crime.description}</p>
         </div>
       </CardContent>
-      {isPoliceOrAdmin && onDelete && (
-        <CardFooter className="pt-0 border-t">
-          <div className="flex justify-end w-full">
-            <Button 
-              variant="destructive" 
-              size="sm"
-              onClick={() => onDelete(crime.id)}
-              className="flex items-center"
-            >
-              <Trash2 className="h-4 w-4 mr-1" />
-              Delete
-            </Button>
-          </div>
-        </CardFooter>
-      )}
+      <CardFooter className="pt-0 border-t">
+        <div className="flex justify-end w-full">
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => navigate(`/crimes/${crime.id}`)}
+          >
+            View Details
+          </Button>
+        </div>
+      </CardFooter>
     </Card>
   );
 };

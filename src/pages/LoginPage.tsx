@@ -69,7 +69,8 @@ const LoginPage = () => {
             
             <Button 
               type="submit" 
-              className="w-full border-2 border-white text-white bg-police hover:bg-white hover:text-police" 
+              variant="police"
+              className="w-full" 
               disabled={isLoading}
             >
               {isLoading ? 'Logging in...' : 'Login'}

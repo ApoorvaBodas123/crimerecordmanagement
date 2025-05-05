@@ -127,6 +127,24 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
 
       const { token, user: userData } = response.data;
+
+      // If the user is a police officer, add them to the police directory
+      if (userData.role.toLowerCase() === 'police') {
+        try {
+          await axios.post(`${API_URL}/officers`, {
+            name: userData.name,
+            email: userData.email,
+            badgeNumber: badgeNumber,
+            rank: '',
+            station: department,
+            userId: userData.id
+          });
+        } catch (error) {
+          console.error('Error adding officer to directory:', error);
+          // Don't throw error here as the user is already registered
+        }
+      }
+
       localStorage.setItem('token', token);
       setUser({
         id: userData._id || userData.id,

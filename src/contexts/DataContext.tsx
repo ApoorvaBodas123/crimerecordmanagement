@@ -2,40 +2,20 @@ import React, { createContext, useState, useContext, ReactNode, useEffect } from
 import { toast } from 'sonner';
 import { CrimeRecord, PoliceStation, PoliceOfficer, SafetyTip, EmergencyAlert } from '../models/types';
 import { policeStations, policeOfficers, safetyTips, emergencyAlerts } from '../services/mockData';
-import axios from 'axios';
+import api from '@/lib/api';
 import { useAuth } from './AuthContext';
 
-// Create axios instance with base URL
-const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
-
-// Add interceptor to include auth token in requests
-api.interceptors.request.use(
-  config => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  error => {
-    return Promise.reject(error);
-  }
-);
-
 interface DataContextType {
-  crimeRecords: CrimeRecord[];
+  crimes: CrimeRecord[];
+  loading: boolean;
+  error: string | null;
+  addCrimeRecord: (crime: Omit<CrimeRecord, 'id' | 'createdAt' | 'status'>) => Promise<void>;
+  deleteCrimeRecord: (id: string) => Promise<void>;
+  fetchCrimeRecords: () => Promise<void>;
   policeStations: PoliceStation[];
   policeOfficers: PoliceOfficer[];
   safetyTips: SafetyTip[];
   emergencyAlerts: EmergencyAlert[];
-  addCrimeRecord: (record: Omit<CrimeRecord, 'id'>) => Promise<void>;
-  updateCrimeRecord: (record: CrimeRecord) => Promise<void>;
-  deleteCrimeRecord: (id: string) => Promise<void>;
   addEmergencyAlert: (alert: Omit<EmergencyAlert, 'id'>) => void;
   deleteEmergencyAlert: (id: string) => void;
   isLoading: boolean;
@@ -44,7 +24,9 @@ interface DataContextType {
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [crimeRecords, setCrimeRecords] = useState<CrimeRecord[]>([]);
+  const [crimes, setCrimes] = useState<CrimeRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [alerts, setAlerts] = useState<EmergencyAlert[]>(emergencyAlerts);
   const [officers, setOfficers] = useState<PoliceOfficer[]>(policeOfficers);
   const [isLoading, setIsLoading] = useState(true);
@@ -71,41 +53,53 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const fetchCrimeRecords = async () => {
     try {
+      setLoading(true);
       const response = await api.get('/crimes');
+      console.log('Fetched crime records:', response.data);
       const records = Array.isArray(response.data) ? response.data : [];
-      setCrimeRecords(records);
-    } catch (error) {
-      console.error('Error fetching crime records:', error);
-      toast.error('Failed to fetch crime records');
-      setCrimeRecords([]);
+      
+      // Map _id to id for each record
+      const mappedRecords = records.map(record => ({
+        ...record,
+        id: record._id || record.id
+      }));
+      
+      console.log('Mapped crime records:', mappedRecords);
+      setCrimes(mappedRecords);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching crimes:', err);
+      setError('Failed to fetch crime records');
+      setCrimes([]);
     } finally {
+      setLoading(false);
       setIsLoading(false);
     }
   };
 
-  const addCrimeRecord = async (record: Omit<CrimeRecord, 'id'>) => {
+  const addCrimeRecord = async (crime: Omit<CrimeRecord, 'id' | 'createdAt' | 'status'>) => {
     try {
       console.log('Starting addCrimeRecord function');
-      console.log('Record to be added:', record);
+      console.log('Record to be added:', crime);
       
       // Validate the record before sending
-      if (!record.title || !record.description || !record.type || !record.location || 
-          !record.severity || !record.victim || !record.toolUsed || !record.timeOfOccurrence) {
+      if (!crime.title || !crime.description || !crime.type || !crime.location || 
+          !crime.severity || !crime.victim || !crime.toolUsed || !crime.timeOfOccurrence) {
         console.error('Missing required fields:', {
-          title: !record.title,
-          description: !record.description,
-          type: !record.type,
-          location: !record.location,
-          severity: !record.severity,
-          victim: !record.victim,
-          toolUsed: !record.toolUsed,
-          timeOfOccurrence: !record.timeOfOccurrence
+          title: !crime.title,
+          description: !crime.description,
+          type: !crime.type,
+          location: !crime.location,
+          severity: !crime.severity,
+          victim: !crime.victim,
+          toolUsed: !crime.toolUsed,
+          timeOfOccurrence: !crime.timeOfOccurrence
         });
         throw new Error('Missing required fields');
       }
 
       console.log('Sending POST request to /crimes');
-      const response = await api.post('/crimes', record);
+      const response = await api.post('/crimes', crime);
       console.log('API response:', response.data);
       
       if (!response.data) {
@@ -114,39 +108,27 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
 
       console.log('Updating local state with new record');
-      setCrimeRecords([response.data, ...crimeRecords]);
+      setCrimes(prev => [response.data, ...prev]);
       toast.success('Crime record added successfully');
-    } catch (error: any) {
-      console.error('Error in addCrimeRecord:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status
-      });
-      const message = error.response?.data?.message || error.message || 'Failed to add crime record';
-      toast.error(message);
-      throw error;
-    }
-  };
-
-  const updateCrimeRecord = async (record: CrimeRecord) => {
-    try {
-      const response = await api.put(`/crimes/${record.id}`, record);
-      setCrimeRecords(crimeRecords.map(r => r.id === record.id ? response.data : r));
-      toast.success('Crime record updated successfully');
-    } catch (error) {
-      console.error('Error updating crime record:', error);
-      toast.error('Failed to update crime record');
+    } catch (err) {
+      console.error('Error adding crime:', err);
+      throw new Error('Failed to add crime record');
     }
   };
 
   const deleteCrimeRecord = async (id: string) => {
+    if (!id) {
+      console.error('Cannot delete crime record: ID is undefined');
+      toast.error('Cannot delete crime record: Invalid ID');
+      return;
+    }
     try {
       await api.delete(`/crimes/${id}`);
-      setCrimeRecords(crimeRecords.filter(r => r.id !== id));
+      setCrimes(prev => prev.filter(crime => crime.id !== id));
       toast.success('Crime record deleted successfully');
-    } catch (error) {
-      console.error('Error deleting crime record:', error);
-      toast.error('Failed to delete crime record');
+    } catch (err) {
+      console.error('Error deleting crime:', err);
+      throw new Error('Failed to delete crime record');
     }
   };
 
@@ -168,14 +150,16 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   return (
     <DataContext.Provider 
       value={{ 
-        crimeRecords, 
+        crimes, 
+        loading, 
+        error,
+        addCrimeRecord,
+        deleteCrimeRecord,
+        fetchCrimeRecords,
         policeStations, 
         policeOfficers: officers, 
         safetyTips, 
         emergencyAlerts: alerts,
-        addCrimeRecord,
-        updateCrimeRecord,
-        deleteCrimeRecord,
         addEmergencyAlert,
         deleteEmergencyAlert,
         isLoading

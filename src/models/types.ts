@@ -13,42 +13,22 @@ export interface CrimeRecord {
   id: string;
   title: string;
   description: string;
-  type: CrimeCategory;
+  type: string;
   location: Location;
-  status: CrimeStatus;
-  severity: CrimeSeverity;
-  reportedBy: string;
+  severity: string;
+  status: string;
+  createdAt: string;
+  timeOfOccurrence: string;
   victim: {
     name: string;
     contact: string;
     description: string;
   };
-  toolUsed: CrimeTool;
-  timeOfOccurrence: string;
+  toolUsed: string;
+  reportedBy: string;
+  reporterName: string;
   assignedTo?: string;
-  evidence?: Array<{
-    type: 'image' | 'video' | 'document' | 'audio';
-    url: string;
-    description: string;
-    uploadedAt: string;
-  }>;
-  witnesses?: Array<{
-    name: string;
-    contact: string;
-    statement: string;
-  }>;
-  suspects?: Array<{
-    name: string;
-    description: string;
-    status: 'wanted' | 'arrested' | 'cleared';
-  }>;
-  notes?: Array<{
-    content: string;
-    addedBy: string;
-    addedAt: string;
-  }>;
-  createdAt: string;
-  updatedAt: string;
+  additionalNotes?: string;
 }
 
 export interface PoliceStation {
