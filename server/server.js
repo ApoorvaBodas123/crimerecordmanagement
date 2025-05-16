@@ -4,9 +4,8 @@ import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import authRoutes from './routes/auth.js';
 import crimeRoutes from './routes/crimes.js';
-import directoryRoutes from './routes/directory.js';
+import officerRoutes from './routes/officers.js';
 import sosRoutes from './routes/sos.js';
-import officerRoutes from './routes/officerRoutes.mjs';
 
 // Load environment variables
 dotenv.config();
@@ -23,9 +22,8 @@ connectDB();
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/crimes', crimeRoutes);
-app.use('/api/directory', directoryRoutes);
-app.use('/api/sos', sosRoutes);
 app.use('/api/officers', officerRoutes);
+app.use('/api/sos', sosRoutes);
 
 // Root route
 app.get('/', (req, res) => {

@@ -7,7 +7,7 @@ import {
   Shield, 
   LogOut, 
   Menu, 
-  X
+  X 
 } from 'lucide-react';
 
 const Navbar: React.FC = () => {
@@ -52,10 +52,9 @@ const Navbar: React.FC = () => {
               <div className="flex items-baseline space-x-4">
                 {user ? (
                   <>
-                    <NavLink to="/crimes">Crime Records</NavLink>
-                    <NavLink to="/directory">Police Directory</NavLink>
-                    <NavLink to="/sos">SOS Alerts</NavLink>
+                    <NavLink to="/crimes">Crimes</NavLink>
                     <NavLink to="/about">About</NavLink>
+                    <NavLink to="/sos">SOS</NavLink>
                     {user && (user.role.toLowerCase() === 'police' || user.role.toLowerCase() === 'admin') && (
                       <Link
                         to="/dashboard"
@@ -139,11 +138,11 @@ const Navbar: React.FC = () => {
                   Crime Records
                 </Link>
                 <Link
-                  to="/directory"
+                  to="/about"
                   className="text-white hover:bg-police-light block px-3 py-2 rounded-md text-base font-medium"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Police Directory
+                  About
                 </Link>
                 <Link
                   to="/sos"

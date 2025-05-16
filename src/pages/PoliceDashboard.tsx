@@ -21,8 +21,8 @@ const PoliceDashboard = () => {
 
   // Calculate statistics
   const totalCrimes = crimes.length;
-  const activeInvestigations = crimes.filter(crime => crime.status === 'under_investigation').length;
-  const resolvedCrimes = crimes.filter(crime => crime.status === 'resolved').length;
+  const activeInvestigations = crimes.filter(crime => crime.status === 'investigating').length;
+  const resolvedCrimes = crimes.filter(crime => crime.status === 'closed').length;
   const totalOfficers = policeOfficers.length;
   const activeAlerts = emergencyAlerts.length;
 
@@ -115,11 +115,11 @@ const PoliceDashboard = () => {
                       <p className="text-sm text-gray-500">{crime.type}</p>
                     </div>
                     <span className={`px-2 py-1 text-xs rounded-full ${
-                      crime.status === 'resolved' ? 'bg-green-100 text-green-800' :
-                      crime.status === 'under_investigation' ? 'bg-yellow-100 text-yellow-800' :
+                      crime.status === 'closed' ? 'bg-green-100 text-green-800' :
+                      crime.status === 'investigating' ? 'bg-yellow-100 text-yellow-800' :
                       'bg-red-100 text-red-800'
                     }`}>
-                      {crime.status.replace('_', ' ')}
+                      {crime.status}
                     </span>
                   </div>
                   <div className="mt-2 flex items-center text-sm text-gray-500">
@@ -145,19 +145,10 @@ const PoliceDashboard = () => {
             <div className="grid grid-cols-1 gap-4">
               <Button
                 variant="outline"
-                className="w-full justify-start"
+                className="w-full"
                 onClick={() => navigate('/crimes')}
               >
-                <FileText className="h-4 w-4 mr-2" />
-                View All Crimes
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full justify-start"
-                onClick={() => navigate('/directory')}
-              >
-                <Users className="h-4 w-4 mr-2" />
-                Police Directory
+                View Crime Records
               </Button>
               <Button
                 variant="outline"

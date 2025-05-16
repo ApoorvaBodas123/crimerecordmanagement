@@ -11,7 +11,7 @@ const SosPage = () => {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-police-dark mb-4">Emergency SOS</h1>
-            <p className="text-xl text-gray-800">
+            <p className="text-xl text-white-800">
               Quick access to emergency services when you need them most
             </p>
           </div>
@@ -20,7 +20,7 @@ const SosPage = () => {
             <CardContent className="pt-6">
               <div className="flex flex-col items-center py-8">
                 <AlertTriangle className="h-16 w-16 text-alert mb-4" />
-                <p className="text-lg font-medium mb-8 text-center text-gray-800">
+                <p className="text-lg font-medium mb-8 text-center text-white-800">
                   Press the SOS button below only in case of a genuine emergency situation
                 </p>
                 <SosButton />
@@ -31,7 +31,7 @@ const SosPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
             <Card>
               <CardContent className="pt-6">
-                <h2 className="text-xl font-bold mb-4 flex items-center text-gray-900">
+                <h2 className="text-xl font-bold mb-4 flex items-center text-white-900">
                   <Info className="h-5 w-5 mr-2 text-blue-600" />
                   How It Works
                 </h2>
@@ -39,8 +39,8 @@ const SosPage = () => {
                   <li className="flex items-start">
                     <MapPin className="h-5 w-5 mr-2 text-police mt-0.5" />
                     <div>
-                      <p className="font-medium text-gray-900">Location Sharing</p>
-                      <p className="text-gray-700">
+                      <p className="font-medium text-white-900">Location Sharing</p>
+                      <p className="text-white-700">
                         Your current location is automatically shared with emergency services
                       </p>
                     </div>
@@ -48,8 +48,8 @@ const SosPage = () => {
                   <li className="flex items-start">
                     <AlertTriangle className="h-5 w-5 mr-2 text-alert mt-0.5" />
                     <div>
-                      <p className="font-medium text-gray-900">Alert Dispatch</p>
-                      <p className="text-gray-700">
+                      <p className="font-medium text-white-900">Alert Dispatch</p>
+                      <p className="text-white-700">
                         An emergency alert is sent to the nearest police station
                       </p>
                     </div>
@@ -57,8 +57,8 @@ const SosPage = () => {
                   <li className="flex items-start">
                     <Phone className="h-5 w-5 mr-2 text-green-600 mt-0.5" />
                     <div>
-                      <p className="font-medium text-gray-900">Response Confirmation</p>
-                      <p className="text-gray-700">
+                      <p className="font-medium text-white-900">Response Confirmation</p>
+                      <p className="text-white-700">
                         You'll receive a confirmation when help is on the way
                       </p>
                     </div>
@@ -69,24 +69,24 @@ const SosPage = () => {
             
             <Card>
               <CardContent className="pt-6">
-                <h2 className="text-xl font-bold mb-4 flex items-center text-gray-900">
+                <h2 className="text-xl font-bold mb-4 flex items-center text-white-900">
                   <CheckCircle className="h-5 w-5 mr-2 text-green-600" />
                   When To Use SOS
                 </h2>
                 <ul className="space-y-2">
-                  <li className="pl-4 border-l-2 border-red-500 text-gray-800">
+                  <li className="pl-4 border-l-2 border-red-500 text-white-800">
                     Immediate danger to yourself or others
                   </li>
-                  <li className="pl-4 border-l-2 border-red-500 text-gray-800">
+                  <li className="pl-4 border-l-2 border-red-500 text-white-800">
                     Witnessing a violent crime in progress
                   </li>
-                  <li className="pl-4 border-l-2 border-red-500 text-gray-800">
+                  <li className="pl-4 border-l-2 border-red-500 text-white-800">
                     Medical emergencies requiring immediate assistance
                   </li>
-                  <li className="pl-4 border-l-2 border-red-500 text-gray-800">
+                  <li className="pl-4 border-l-2 border-red-500 text-white-800">
                     Fire or other dangerous situations
                   </li>
-                  <li className="pl-4 border-l-2 border-red-500 text-gray-800">
+                  <li className="pl-4 border-l-2 border-red-500 text-white-800">
                     Traffic accidents with injuries
                   </li>
                 </ul>

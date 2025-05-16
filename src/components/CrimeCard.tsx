@@ -91,7 +91,7 @@ const CrimeCard: React.FC<CrimeCardProps> = ({ crime, onDelete }) => {
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={() => onDelete(crime.id)}
+                onClick={() => onDelete(crime._id || crime.id)}
               >
                 <Trash2 className="h-4 w-4 mr-1" />
                 Delete
@@ -119,23 +119,23 @@ const CrimeCard: React.FC<CrimeCardProps> = ({ crime, onDelete }) => {
               Time of Occurrence: {new Date(crime.timeOfOccurrence).toLocaleString()}
             </p>
           </div>
-        </div>
+            </div>
         <div className="mt-4">
           <p className="text-sm text-gray-600">Description:</p>
           <p className="text-sm">{crime.description}</p>
         </div>
       </CardContent>
-      <CardFooter className="pt-0 border-t">
-        <div className="flex justify-end w-full">
-          <Button
+        <CardFooter className="pt-0 border-t">
+          <div className="flex justify-end w-full">
+            <Button 
             variant="outline"
             className="w-full"
             onClick={() => navigate(`/crimes/${crime.id}`)}
           >
             View Details
-          </Button>
-        </div>
-      </CardFooter>
+            </Button>
+          </div>
+        </CardFooter>
     </Card>
   );
 };

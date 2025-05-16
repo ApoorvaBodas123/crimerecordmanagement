@@ -47,7 +47,7 @@ const HomePage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="bg-white rounded-lg shadow-md p-6">
             <Shield className="h-12 w-12 text-police mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Crime Management</h3>
+            <h3 className="text-xl font-semibold mb-2 text-black">Crime Management</h3>
             <p className="text-gray-600">
               Efficiently manage and track crime records in your jurisdiction.
             </p>
@@ -55,7 +55,7 @@ const HomePage = () => {
 
           <div className="bg-white rounded-lg shadow-md p-6">
             <AlertTriangle className="h-12 w-12 text-police mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Emergency Alerts</h3>
+            <h3 className="text-xl font-semibold text-black">Emergency Alerts</h3>
             <p className="text-gray-600">
               Receive and respond to emergency alerts in real-time.
             </p>
@@ -63,7 +63,7 @@ const HomePage = () => {
 
           <div className="bg-white rounded-lg shadow-md p-6">
             <Users className="h-12 w-12 text-police mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Police Directory</h3>
+            <h3 className="text-xl font-semibold text-black">Police Directory</h3>
             <p className="text-gray-600">
               Access contact information for law enforcement personnel.
             </p>
@@ -71,7 +71,7 @@ const HomePage = () => {
 
           <div className="bg-white rounded-lg shadow-md p-6">
             <FileText className="h-12 w-12 text-police mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Reports & Analytics</h3>
+            <h3 className="text-xl font-semibold text-black">Reports & Analytics</h3>
             <p className="text-gray-600">
               Generate detailed reports and analyze crime patterns.
             </p>

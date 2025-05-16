@@ -10,6 +10,13 @@ const Navigation = () => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const navigationItems = [
+    { name: "Home", path: "/" },
+    { name: "Crimes", path: "/crimes" },
+    { name: "About", path: "/about" },
+    { name: "SOS", path: "/sos" },
+  ];
+
   const publicNavItems = [
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },

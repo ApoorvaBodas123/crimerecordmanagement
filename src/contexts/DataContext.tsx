@@ -124,7 +124,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
     try {
       await api.delete(`/crimes/${id}`);
-      setCrimes(prev => prev.filter(crime => crime.id !== id));
+      setCrimes(prev => prev.filter(crime => (crime._id || crime.id) !== id));
       toast.success('Crime record deleted successfully');
     } catch (err) {
       console.error('Error deleting crime:', err);

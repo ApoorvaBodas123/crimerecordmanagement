@@ -10,13 +10,14 @@ export interface Location {
 }
 
 export interface CrimeRecord {
+  _id?: string;
   id: string;
   title: string;
   description: string;
-  type: string;
+  type: CrimeCategory;
   location: Location;
-  severity: string;
-  status: string;
+  severity: 'low' | 'medium' | 'high';
+  status: 'open' | 'investigating' | 'closed';
   createdAt: string;
   timeOfOccurrence: string;
   victim: {
@@ -24,11 +25,11 @@ export interface CrimeRecord {
     contact: string;
     description: string;
   };
-  toolUsed: string;
-  reportedBy: string;
+  toolUsed: CrimeTool;
+  additionalNotes?: string;
   reporterName: string;
   assignedTo?: string;
-  additionalNotes?: string;
+  reportedBy?: string;
 }
 
 export interface PoliceStation {

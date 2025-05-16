@@ -11,7 +11,6 @@ import CrimeDetailsPage from '@/pages/CrimeDetailsPage';
 import { useAuth } from '@/contexts/AuthContext';
 import { Toaster } from 'sonner';
 import HomePage from '@/pages/HomePage';
-import DirectoryPage from '@/pages/DirectoryPage';
 import AboutPage from '@/pages/AboutPage';
 import SosPage from '@/pages/SosPage';
 import PoliceDashboard from '@/pages/PoliceDashboard';
@@ -40,13 +39,12 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
 const App = () => {
   return (
     <Router>
-      <AuthProvider>
-        <DataProvider>
+    <AuthProvider>
+      <DataProvider>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/directory" element={<DirectoryPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/sos" element={<SosPage />} />
             <Route
@@ -83,8 +81,8 @@ const App = () => {
             />
           </Routes>
           <Toaster position="top-right" />
-        </DataProvider>
-      </AuthProvider>
+      </DataProvider>
+    </AuthProvider>
     </Router>
   );
 };
