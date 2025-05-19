@@ -21,8 +21,8 @@ const CrimesPage = () => {
 
   // Filter states
   const [selectedLocation, setSelectedLocation] = React.useState('');
-  const [selectedTool, setSelectedTool] = React.useState('all');
-  const [selectedType, setSelectedType] = React.useState('all');
+  const [selectedTool, setSelectedTool] = React.useState<CrimeTool | 'all'>('all');
+  const [selectedType, setSelectedType] = React.useState<CrimeCategory | 'all'>('all');
   const [selectedTime, setSelectedTime] = React.useState('all');
   const [open, setOpen] = React.useState(false);
 
@@ -31,9 +31,12 @@ const CrimesPage = () => {
   const types: CrimeCategory[] = ['theft', 'assault', 'burglary', 'vandalism', 'fraud', 'other'];
 
   // Get unique locations from crimes
-  const locations = [...new Set(crimes.map(crime => crime.location.address))];
+  const locations = [...new Set(crimes.map(crime => 
+    typeof crime.location === 'string' ? crime.location : crime.location.address
+  ))];
 
   const handleDelete = async (id: string) => {
+    if (!id) return;
     try {
       await deleteCrimeRecord(id);
       toast.success('Crime record deleted successfully');
@@ -45,7 +48,8 @@ const CrimesPage = () => {
 
   // Filter crimes based on search criteria
   const filteredCrimes = crimes.filter(crime => {
-    const matchesLocation = !selectedLocation || crime.location.address.toLowerCase().includes(selectedLocation.toLowerCase());
+    const crimeLocation = typeof crime.location === 'string' ? crime.location : crime.location.address;
+    const matchesLocation = !selectedLocation || crimeLocation.toLowerCase().includes(selectedLocation.toLowerCase());
     const matchesTool = selectedTool === 'all' || crime.toolUsed === selectedTool;
     const matchesType = selectedType === 'all' || crime.type === selectedType;
     const matchesTime = selectedTime === 'all' || (() => {
@@ -100,55 +104,31 @@ const CrimesPage = () => {
       {/* Filters Section */}
       <div className="bg-white rounded-lg shadow-md p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
+          <div className="relative">
+            <Input
+              type="text"
+              placeholder="Search location..."
+              value={selectedLocation}
+              onChange={(e) => setSelectedLocation(e.target.value)}
+              className="w-full"
+            />
+            {selectedLocation && (
               <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={open}
-                className="w-full justify-between"
+                variant="ghost"
+                size="sm"
+                className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 p-0"
+                onClick={() => setSelectedLocation('')}
               >
-                {selectedLocation || "Search location..."}
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                <span className="sr-only">Clear</span>
+                ×
               </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-full p-0">
-              <Command>
-                <CommandInput 
-                  placeholder="Search location..." 
-                  value={selectedLocation}
-                  onValueChange={setSelectedLocation}
-                />
-                <CommandEmpty>No location found.</CommandEmpty>
-                <CommandGroup>
-                  {locations
-                    .filter(location => 
-                      location.toLowerCase().includes(selectedLocation.toLowerCase())
-                    )
-                    .map((location) => (
-                      <CommandItem
-                        key={location}
-                        value={location}
-                        onSelect={() => {
-                          setSelectedLocation(location);
-                          setOpen(false);
-                        }}
-                      >
-                        <Check
-                          className={cn(
-                            "mr-2 h-4 w-4",
-                            selectedLocation === location ? "opacity-100" : "opacity-0"
-                          )}
-                        />
-                        {location}
-                      </CommandItem>
-                    ))}
-                </CommandGroup>
-              </Command>
-            </PopoverContent>
-          </Popover>
+            )}
+          </div>
 
-          <Select value={selectedTool} onValueChange={setSelectedTool}>
+          <Select 
+            value={selectedTool} 
+            onValueChange={(value: CrimeTool | 'all') => setSelectedTool(value)}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Tool Used" />
             </SelectTrigger>
@@ -162,7 +142,10 @@ const CrimesPage = () => {
             </SelectContent>
           </Select>
 
-          <Select value={selectedType} onValueChange={setSelectedType}>
+          <Select 
+            value={selectedType} 
+            onValueChange={(value: CrimeCategory | 'all') => setSelectedType(value)}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Crime Type" />
             </SelectTrigger>

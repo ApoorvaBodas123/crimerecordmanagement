@@ -24,7 +24,16 @@ const CrimeCard: React.FC<CrimeCardProps> = ({ crime, onDelete }) => {
     return location.address;
   };
 
+  const getVictimInfo = (victim: CrimeRecord['victim']): string => {
+    if (typeof victim === 'string') {
+      return victim;
+    }
+    return `${victim.name} - ${victim.contact}`;
+  };
+
   const downloadReport = () => {
+    if (!crime) return;
+
     // Create a formatted report
     const report = `
       CRIME REPORT
@@ -43,15 +52,13 @@ const CrimeCard: React.FC<CrimeCardProps> = ({ crime, onDelete }) => {
       ${crime.description}
       
       Victim Information:
-      Name: ${crime.victim.name}
-      Contact: ${crime.victim.contact}
-      Description: ${crime.victim.description}
+      ${getVictimInfo(crime.victim)}
       
       Tool Used: ${crime.toolUsed}
       Additional Notes: ${crime.additionalNotes || 'N/A'}
       
-      Reported by: ${crime.reporterName}
-      Assigned to: ${crime.assignedTo || 'Not assigned'}
+      Reported by: ${typeof crime.reportedBy === 'string' ? crime.reportedBy : crime.reportedBy?.name || 'Anonymous'}
+      Assigned to: ${typeof crime.assignedTo === 'string' ? crime.assignedTo : crime.assignedTo?.name || 'Not assigned'}
     `;
 
     // Create a blob and download link
@@ -67,6 +74,12 @@ const CrimeCard: React.FC<CrimeCardProps> = ({ crime, onDelete }) => {
   };
 
   if (!crime) {
+    return null;
+  }
+
+  const crimeId = crime._id || crime.id;
+  if (!crimeId) {
+    console.error('Crime record has no ID');
     return null;
   }
 
@@ -91,7 +104,7 @@ const CrimeCard: React.FC<CrimeCardProps> = ({ crime, onDelete }) => {
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={() => onDelete(crime._id || crime.id)}
+                onClick={() => onDelete(crimeId)}
               >
                 <Trash2 className="h-4 w-4 mr-1" />
                 Delete
@@ -111,7 +124,9 @@ const CrimeCard: React.FC<CrimeCardProps> = ({ crime, onDelete }) => {
             <p className="text-sm text-gray-600">Status: {crime.status}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">Reported by: {crime.reporterName}</p>
+            <p className="text-sm text-gray-600">
+              Reported by: {typeof crime.reportedBy === 'string' ? crime.reportedBy : crime.reportedBy?.name || 'Anonymous'}
+            </p>
             <p className="text-sm text-gray-600">
               Date: {new Date(crime.createdAt).toLocaleDateString()}
             </p>
@@ -119,23 +134,23 @@ const CrimeCard: React.FC<CrimeCardProps> = ({ crime, onDelete }) => {
               Time of Occurrence: {new Date(crime.timeOfOccurrence).toLocaleString()}
             </p>
           </div>
-            </div>
+        </div>
         <div className="mt-4">
           <p className="text-sm text-gray-600">Description:</p>
           <p className="text-sm">{crime.description}</p>
         </div>
       </CardContent>
-        <CardFooter className="pt-0 border-t">
-          <div className="flex justify-end w-full">
-            <Button 
+      <CardFooter className="pt-0 border-t">
+        <div className="flex justify-end w-full">
+          <Button 
             variant="outline"
             className="w-full"
-            onClick={() => navigate(`/crimes/${crime.id}`)}
+            onClick={() => navigate(`/crimes/${crimeId}`)}
           >
             View Details
-            </Button>
-          </div>
-        </CardFooter>
+          </Button>
+        </div>
+      </CardFooter>
     </Card>
   );
 };

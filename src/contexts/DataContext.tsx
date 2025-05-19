@@ -12,6 +12,7 @@ interface DataContextType {
   addCrimeRecord: (crime: Omit<CrimeRecord, 'id' | 'createdAt' | 'status'>) => Promise<void>;
   deleteCrimeRecord: (id: string) => Promise<void>;
   fetchCrimeRecords: () => Promise<void>;
+  updateCrimeStatus: (id: string, status: 'reported' | 'under_investigation' | 'resolved' | 'closed') => Promise<void>;
   policeStations: PoliceStation[];
   policeOfficers: PoliceOfficer[];
   safetyTips: SafetyTip[];
@@ -23,14 +24,58 @@ interface DataContextType {
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
+const initialSafetyTips: SafetyTip[] = [
+  {
+    id: '1',
+    title: 'Home Security Basics',
+    content: 'Always lock your doors and windows, even when you\'re home. Install a security system and keep it maintained. Consider motion-sensor lights around your property.',
+    category: 'Home Safety',
+    priority: 'high',
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: '2',
+    title: 'Online Safety',
+    content: 'Use strong, unique passwords for all accounts. Enable two-factor authentication. Be cautious of suspicious emails and links. Never share personal information online.',
+    category: 'Digital Safety',
+    priority: 'high',
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: '3',
+    title: 'Personal Safety',
+    content: 'Stay aware of your surroundings. Walk with confidence. Keep your phone charged and accessible. Share your location with trusted contacts when traveling.',
+    category: 'Personal Safety',
+    priority: 'medium',
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: '4',
+    title: 'Vehicle Security',
+    content: 'Always lock your vehicle. Park in well-lit areas. Don\'t leave valuables visible. Consider installing a car alarm or tracking device.',
+    category: 'Vehicle Safety',
+    priority: 'medium',
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: '5',
+    title: 'Emergency Preparedness',
+    content: 'Keep emergency numbers saved in your phone. Have a first-aid kit at home and in your car. Know your local emergency services and evacuation routes.',
+    category: 'Emergency',
+    priority: 'high',
+    createdAt: new Date().toISOString()
+  }
+];
+
 export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [crimes, setCrimes] = useState<CrimeRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [alerts, setAlerts] = useState<EmergencyAlert[]>(emergencyAlerts);
+  const [alerts, setAlerts] = useState<EmergencyAlert[]>([]);
   const [officers, setOfficers] = useState<PoliceOfficer[]>(policeOfficers);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
+  const [safetyTips] = useState<SafetyTip[]>(initialSafetyTips);
 
   useEffect(() => {
     if (user) {
@@ -132,18 +177,32 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const updateCrimeStatus = async (id: string, status: 'reported' | 'under_investigation' | 'resolved' | 'closed') => {
+    try {
+      await api.put(`/crimes/${id}`, { status });
+      setCrimes(prev => prev.map(crime => 
+        (crime._id || crime.id) === id ? { ...crime, status } : crime
+      ));
+      toast.success(`Case status updated to ${status}`);
+    } catch (err) {
+      console.error('Error updating crime status:', err);
+      toast.error('Failed to update case status');
+    }
+  };
+
   const addEmergencyAlert = (alert: Omit<EmergencyAlert, 'id'>) => {
     const newAlert = {
       ...alert,
-      id: `${Date.now()}`
+      id: `${Date.now()}`,
+      datePosted: new Date().toISOString()
     };
     
-    setAlerts([newAlert, ...alerts]);
+    setAlerts(prevAlerts => [newAlert, ...prevAlerts]);
     toast.success('Emergency alert added successfully');
   };
 
   const deleteEmergencyAlert = (id: string) => {
-    setAlerts(alerts.filter(a => a.id !== id));
+    setAlerts(prevAlerts => prevAlerts.filter(a => a.id !== id));
     toast.success('Emergency alert deleted successfully');
   };
 
@@ -156,6 +215,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         addCrimeRecord,
         deleteCrimeRecord,
         fetchCrimeRecords,
+        updateCrimeStatus,
         policeStations, 
         policeOfficers: officers, 
         safetyTips, 

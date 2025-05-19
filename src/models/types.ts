@@ -10,26 +10,26 @@ export interface Location {
 }
 
 export interface CrimeRecord {
+  id?: string;
   _id?: string;
-  id: string;
   title: string;
   description: string;
   type: CrimeCategory;
-  location: Location;
-  severity: 'low' | 'medium' | 'high';
-  status: 'open' | 'investigating' | 'closed';
+  location: Location | string;
+  severity: string;
+  status: 'reported' | 'under_investigation' | 'resolved' | 'closed';
   createdAt: string;
   timeOfOccurrence: string;
   victim: {
     name: string;
     contact: string;
-    description: string;
-  };
-  toolUsed: CrimeTool;
+    description?: string;
+  } | string;
+  toolUsed: string;
   additionalNotes?: string;
-  reporterName: string;
-  assignedTo?: string;
-  reportedBy?: string;
+  reporterName?: string;
+  reportedBy: string | PoliceOfficer;
+  assignedTo?: string | PoliceOfficer;
 }
 
 export interface PoliceStation {
@@ -46,14 +46,13 @@ export interface PoliceStation {
 }
 
 export interface PoliceOfficer {
-  id: string;
+  _id: string;
   name: string;
-  badge: string;
-  rank: string;
-  stationId: string;
-  phone: string;
-  email: string;
-  specialization: string[];
+  badgeNumber: string;
+  department: string;
+  rank?: string;
+  contact?: string;
+  email?: string;
 }
 
 export interface SafetyTip {
@@ -61,7 +60,8 @@ export interface SafetyTip {
   title: string;
   content: string;
   category: string;
-  datePosted: string;
+  priority: 'high' | 'medium' | 'low';
+  createdAt: string;
 }
 
 export interface EmergencyAlert {

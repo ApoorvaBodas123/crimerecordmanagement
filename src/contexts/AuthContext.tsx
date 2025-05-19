@@ -11,6 +11,8 @@ export interface User {
   name: string;
   email: string;
   role: UserRole;
+  badgeNumber?: string;
+  department?: string;
 }
 
 interface AuthContextType {
@@ -20,7 +22,6 @@ interface AuthContextType {
     name: string,
     email: string,
     password: string,
-    role: UserRole,
     badgeNumber: string,
     department: string,
     phoneNumber: string
@@ -58,7 +59,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         userId: userData._id,
         name: userData.name,
         email: userData.email,
-        role: userData.role
+        role: userData.role,
+        badgeNumber: userData.badgeNumber,
+        department: userData.department
       });
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -87,7 +90,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         userId: userData._id || userData.id,
         name: userData.name,
         email: userData.email,
-        role: userData.role
+        role: userData.role,
+        badgeNumber: userData.badgeNumber,
+        department: userData.department
       });
       toast.success(`Welcome back, ${userData.name}`);
       return true;
@@ -105,63 +110,48 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     name: string,
     email: string,
     password: string,
-    role: UserRole,
     badgeNumber: string,
     department: string,
     phoneNumber: string
-  ): Promise<boolean> => {
-    setIsLoading(true);
+  ) => {
     try {
       const response = await axios.post(`${API_URL}/auth/register`, {
         name,
         email,
         password,
-        role,
         badgeNumber,
         department,
         phoneNumber
       });
-      
-      if (!response.data.token || !response.data.user) {
-        throw new Error('Invalid response from server');
-      }
 
       const { token, user: userData } = response.data;
-
-      // If the user is a police officer, add them to the police directory
-      if (userData.role.toLowerCase() === 'police') {
-        try {
-          await axios.post(`${API_URL}/officers`, {
-            name: userData.name,
-            email: userData.email,
-            badgeNumber: badgeNumber,
-            rank: '',
-            station: department,
-            userId: userData.id
-          });
-        } catch (error) {
-          console.error('Error adding officer to directory:', error);
-          // Don't throw error here as the user is already registered
-        }
-      }
-
       localStorage.setItem('token', token);
       setUser({
         id: userData._id || userData.id,
         userId: userData._id || userData.id,
         name: userData.name,
         email: userData.email,
-        role: userData.role
+        role: userData.role,
+        badgeNumber: userData.badgeNumber,
+        department: userData.department
       });
-      toast.success('Registration successful');
+
       return true;
     } catch (error: any) {
       console.error('Registration error:', error);
-      const message = error.response?.data?.message || 'Failed to register';
-      toast.error(message);
-      return false;
-    } finally {
-      setIsLoading(false);
+      const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
+      const missingFields = error.response?.data?.missingFields;
+      
+      if (missingFields) {
+        const missingFieldNames = Object.entries(missingFields)
+          .filter(([_, isMissing]) => isMissing)
+          .map(([field]) => field)
+          .join(', ');
+        toast.error(`Please fill in all required fields: ${missingFieldNames}`);
+      } else {
+        toast.error(errorMessage);
+      }
+      throw error;
     }
   };
 

@@ -96,8 +96,7 @@ const Navbar: React.FC = () => {
               ) : (
                 <div className="space-x-2">
                   <Button 
-                    variant="outline" 
-                    className="border-police-dark text-police-dark hover:bg-police-dark hover:text-white"
+                    className="bg-police-dark text-white hover:bg-police"
                     asChild
                   >
                     <Link to="/login">Login</Link>

@@ -1,57 +1,93 @@
-import React from 'react';
-import MainLayout from '@/layouts/MainLayout';
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useAuth } from '@/contexts/AuthContext';
-import { Link, useNavigate } from 'react-router-dom';
+import { Label } from '@/components/ui/label';
+import MainLayout from '@/layouts/MainLayout';
 import { toast } from 'sonner';
 
 const RegisterPage = () => {
-  const { register } = useAuth();
   const navigate = useNavigate();
-  const [formData, setFormData] = React.useState({
+  const { register } = useAuth();
+  const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
-    role: 'police' as 'police' | 'admin',
+    confirmPassword: '',
     badgeNumber: '',
     department: '',
     phoneNumber: ''
   });
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!formData.name) newErrors.name = 'Name is required';
+    if (!formData.email) newErrors.email = 'Email is required';
+    else if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+    if (!formData.password) newErrors.password = 'Password is required';
+    else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+    if (!formData.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
+    else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
+    }
+    if (!formData.badgeNumber) newErrors.badgeNumber = 'Badge number is required';
+    if (!formData.department) newErrors.department = 'Department is required';
+    if (!formData.phoneNumber) newErrors.phoneNumber = 'Phone number is required';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleRoleChange = (value: 'police' | 'admin') => {
-    setFormData(prev => ({ ...prev, role: value }));
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    
+    if (!validateForm()) {
+      return;
+    }
 
     try {
-      const success = await register(
+      setLoading(true);
+      await register(
         formData.name,
         formData.email,
         formData.password,
-        formData.role,
         formData.badgeNumber,
         formData.department,
         formData.phoneNumber
       );
-      if (success) {
-        navigate('/crimes');
-      }
-    } catch (error) {
+      toast.success('Registration successful!');
+      navigate('/');
+    } catch (error: any) {
       console.error('Registration error:', error);
-      toast.error('Registration failed. Please try again.');
+      const serverErrors = error.response?.data?.errors;
+      if (serverErrors) {
+        setErrors(serverErrors);
+      }
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -63,129 +99,137 @@ const RegisterPage = () => {
           
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-police-dark mb-1">
+              <Label htmlFor="name" className="block text-sm font-medium text-police-dark mb-1">
                 Full Name
-              </label>
+              </Label>
               <Input
                 id="name"
                 name="name"
+                type="text"
+                required
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Enter your full name"
-                required
-                disabled={isLoading}
-                className="border-2 focus:border-police focus:ring-police"
+                disabled={loading}
+                className={`border-2 focus:border-police focus:ring-police ${errors.name ? 'border-red-500' : ''}`}
               />
+              {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
             </div>
-            
+
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-police-dark mb-1">
+              <Label htmlFor="email" className="block text-sm font-medium text-police-dark mb-1">
                 Email
-              </label>
+              </Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
+                required
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email"
-                required
-                disabled={isLoading}
-                className="border-2 focus:border-police focus:ring-police"
+                disabled={loading}
+                className={`border-2 focus:border-police focus:ring-police ${errors.email ? 'border-red-500' : ''}`}
               />
+              {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
             </div>
-            
+
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-police-dark mb-1">
-                Password
-              </label>
+              <Label htmlFor="badgeNumber" className="block text-sm font-medium text-police-dark mb-1">
+                Badge Number
+              </Label>
               <Input
-                id="password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Create a password"
+                id="badgeNumber"
+                name="badgeNumber"
+                type="text"
                 required
-                disabled={isLoading}
-                className="border-2 focus:border-police focus:ring-police"
+                value={formData.badgeNumber}
+                onChange={handleChange}
+                placeholder="Enter your badge number"
+                disabled={loading}
+                className={`border-2 focus:border-police focus:ring-police ${errors.badgeNumber ? 'border-red-500' : ''}`}
               />
+              {errors.badgeNumber && <p className="mt-1 text-sm text-red-500">{errors.badgeNumber}</p>}
             </div>
-            
+
             <div>
-              <label htmlFor="phoneNumber" className="block text-sm font-medium text-police-dark mb-1">
+              <Label htmlFor="department" className="block text-sm font-medium text-police-dark mb-1">
+                Department
+              </Label>
+              <Input
+                id="department"
+                name="department"
+                type="text"
+                required
+                value={formData.department}
+                onChange={handleChange}
+                placeholder="Enter your department"
+                disabled={loading}
+                className={`border-2 focus:border-police focus:ring-police ${errors.department ? 'border-red-500' : ''}`}
+              />
+              {errors.department && <p className="mt-1 text-sm text-red-500">{errors.department}</p>}
+            </div>
+
+            <div>
+              <Label htmlFor="phoneNumber" className="block text-sm font-medium text-police-dark mb-1">
                 Phone Number
-              </label>
+              </Label>
               <Input
                 id="phoneNumber"
                 name="phoneNumber"
                 type="tel"
+                required
                 value={formData.phoneNumber}
                 onChange={handleChange}
                 placeholder="Enter your phone number"
-                required
-                disabled={isLoading}
-                className="border-2 focus:border-police focus:ring-police"
+                disabled={loading}
+                className={`border-2 focus:border-police focus:ring-police ${errors.phoneNumber ? 'border-red-500' : ''}`}
               />
+              {errors.phoneNumber && <p className="mt-1 text-sm text-red-500">{errors.phoneNumber}</p>}
             </div>
-            
+
             <div>
-              <label htmlFor="role" className="block text-sm font-medium text-police-dark mb-1">
-                Role
-              </label>
-              <Select
-                value={formData.role}
-                onValueChange={handleRoleChange}
-                disabled={isLoading}
-              >
-                <SelectTrigger className="border-2 focus:border-police focus:ring-police">
-                  <SelectValue placeholder="Select your role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="police">Police Officer</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div>
-              <label htmlFor="badgeNumber" className="block text-sm font-medium text-police-dark mb-1">
-                Badge Number
-              </label>
+              <Label htmlFor="password" className="block text-sm font-medium text-police-dark mb-1">
+                Password
+              </Label>
               <Input
-                id="badgeNumber"
-                name="badgeNumber"
-                value={formData.badgeNumber}
-                onChange={handleChange}
-                placeholder="Enter your badge number"
+                id="password"
+                name="password"
+                type="password"
                 required
-                disabled={isLoading}
-                className="border-2 focus:border-police focus:ring-police"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Create a password"
+                disabled={loading}
+                className={`border-2 focus:border-police focus:ring-police ${errors.password ? 'border-red-500' : ''}`}
               />
+              {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password}</p>}
             </div>
-            
+
             <div>
-              <label htmlFor="department" className="block text-sm font-medium text-police-dark mb-1">
-                Department
-              </label>
+              <Label htmlFor="confirmPassword" className="block text-sm font-medium text-police-dark mb-1">
+                Confirm Password
+              </Label>
               <Input
-                id="department"
-                name="department"
-                value={formData.department}
-                onChange={handleChange}
-                placeholder="Enter your department"
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
                 required
-                disabled={isLoading}
-                className="border-2 focus:border-police focus:ring-police"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="Confirm your password"
+                disabled={loading}
+                className={`border-2 focus:border-police focus:ring-police ${errors.confirmPassword ? 'border-red-500' : ''}`}
               />
+              {errors.confirmPassword && <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>}
             </div>
-            
+
             <Button 
               type="submit" 
               className="w-full bg-police hover:bg-police-dark text-white font-semibold py-2" 
-              disabled={isLoading}
+              disabled={loading}
             >
-              {isLoading ? 'Registering...' : 'Register'}
+              {loading ? 'Registering...' : 'Register'}
             </Button>
           </form>
           

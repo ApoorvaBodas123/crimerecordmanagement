@@ -5,7 +5,7 @@ import {
   createOfficer, 
   updateOfficer, 
   deleteOfficer 
-} from '../controllers/officerController.mjs';
+} from '../controllers/officerController.js';
 import auth from '../middleware/auth.js';
 
 const router = express.Router();
