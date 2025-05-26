@@ -1,4 +1,3 @@
-
 import { CrimeRecord, PoliceStation, PoliceOfficer, SafetyTip, EmergencyAlert } from '../models/types';
 
 // Mock Crime Records
@@ -98,44 +97,40 @@ export const policeStations: PoliceStation[] = [
 // Mock Police Officers
 export const policeOfficers: PoliceOfficer[] = [
   {
-    id: '1',
+    _id: '1',
     name: 'Officer John Smith',
-    badge: 'B12345',
+    badgeNumber: 'B12345',
+    department: 'Homicide',
     rank: 'Sergeant',
-    stationId: '1',
-    phone: '(555) 111-2222',
-    email: 'jsmith@policedept.gov',
-    specialization: ['Homicide', 'Violent Crimes']
+    contact: '(555) 111-2222',
+    email: 'jsmith@policedept.gov'
   },
   {
-    id: '2',
+    _id: '2',
     name: 'Officer Jane Doe',
-    badge: 'B23456',
+    badgeNumber: 'B23456',
+    department: 'Fraud',
     rank: 'Detective',
-    stationId: '1',
-    phone: '(555) 222-3333',
-    email: 'jdoe@policedept.gov',
-    specialization: ['Fraud', 'White Collar Crimes']
+    contact: '(555) 222-3333',
+    email: 'jdoe@policedept.gov'
   },
   {
-    id: '3',
+    _id: '3',
     name: 'Officer Robert Chen',
-    badge: 'B34567',
+    badgeNumber: 'B34567',
+    department: 'Traffic',
     rank: 'Patrol Officer',
-    stationId: '2',
-    phone: '(555) 333-4444',
-    email: 'rchen@policedept.gov',
-    specialization: ['Traffic', 'DUI Enforcement']
+    contact: '(555) 333-4444',
+    email: 'rchen@policedept.gov'
   },
   {
-    id: '4',
+    _id: '4',
     name: 'Officer Maria Rodriguez',
-    badge: 'B45678',
+    badgeNumber: 'B45678',
+    department: 'Narcotics',
     rank: 'Detective',
-    stationId: '3',
-    phone: '(555) 444-5555',
-    email: 'mrodriguez@policedept.gov',
-    specialization: ['Narcotics', 'Gang Activity']
+    contact: '(555) 444-5555',
+    email: 'mrodriguez@policedept.gov'
   }
 ];
 

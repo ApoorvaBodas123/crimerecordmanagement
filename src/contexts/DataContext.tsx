@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { toast } from 'sonner';
-import { CrimeRecord, PoliceStation, PoliceOfficer, SafetyTip, EmergencyAlert } from '../models/types';
-import { policeStations, policeOfficers, safetyTips, emergencyAlerts } from '../services/mockData';
+import { CrimeRecord, PoliceStation, PoliceOfficer, SafetyTip, EmergencyAlert, User } from '../models/types';
+import { policeStations, policeOfficers, safetyTips as initialSafetyTips, emergencyAlerts } from '../services/mockData';
 import api from '@/lib/api';
 import { useAuth } from './AuthContext';
 
@@ -20,52 +20,19 @@ interface DataContextType {
   addEmergencyAlert: (alert: Omit<EmergencyAlert, 'id'>) => void;
   deleteEmergencyAlert: (id: string) => void;
   isLoading: boolean;
+  users: User[];
+  fetchUsers: () => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
-const initialSafetyTips: SafetyTip[] = [
-  {
-    id: '1',
-    title: 'Home Security Basics',
-    content: 'Always lock your doors and windows, even when you\'re home. Install a security system and keep it maintained. Consider motion-sensor lights around your property.',
-    category: 'Home Safety',
-    priority: 'high',
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: '2',
-    title: 'Online Safety',
-    content: 'Use strong, unique passwords for all accounts. Enable two-factor authentication. Be cautious of suspicious emails and links. Never share personal information online.',
-    category: 'Digital Safety',
-    priority: 'high',
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: '3',
-    title: 'Personal Safety',
-    content: 'Stay aware of your surroundings. Walk with confidence. Keep your phone charged and accessible. Share your location with trusted contacts when traveling.',
-    category: 'Personal Safety',
-    priority: 'medium',
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: '4',
-    title: 'Vehicle Security',
-    content: 'Always lock your vehicle. Park in well-lit areas. Don\'t leave valuables visible. Consider installing a car alarm or tracking device.',
-    category: 'Vehicle Safety',
-    priority: 'medium',
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: '5',
-    title: 'Emergency Preparedness',
-    content: 'Keep emergency numbers saved in your phone. Have a first-aid kit at home and in your car. Know your local emergency services and evacuation routes.',
-    category: 'Emergency',
-    priority: 'high',
-    createdAt: new Date().toISOString()
+export const useData = () => {
+  const context = useContext(DataContext);
+  if (!context) {
+    throw new Error('useData must be used within a DataProvider');
   }
-];
+  return context;
+};
 
 export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [crimes, setCrimes] = useState<CrimeRecord[]>([]);
@@ -74,6 +41,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [alerts, setAlerts] = useState<EmergencyAlert[]>([]);
   const [officers, setOfficers] = useState<PoliceOfficer[]>(policeOfficers);
   const [isLoading, setIsLoading] = useState(true);
+  const [users, setUsers] = useState<User[]>([]);
   const { user } = useAuth();
   const [safetyTips] = useState<SafetyTip[]>(initialSafetyTips);
 
@@ -81,8 +49,20 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (user) {
       fetchCrimeRecords();
       fetchPoliceOfficers();
+      fetchUsers();
     }
   }, [user]);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await api.get('/users');
+      const fetchedUsers = Array.isArray(response.data) ? response.data : [];
+      setUsers(fetchedUsers);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      toast.error('Failed to fetch users');
+    }
+  };
 
   const fetchPoliceOfficers = async () => {
     try {
@@ -222,18 +202,12 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         emergencyAlerts: alerts,
         addEmergencyAlert,
         deleteEmergencyAlert,
-        isLoading
+        isLoading,
+        users,
+        fetchUsers
       }}
     >
       {children}
     </DataContext.Provider>
   );
-};
-
-export const useData = () => {
-  const context = useContext(DataContext);
-  if (context === undefined) {
-    throw new Error('useData must be used within a DataProvider');
-  }
-  return context;
 };

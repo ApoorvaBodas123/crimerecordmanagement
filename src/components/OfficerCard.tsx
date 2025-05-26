@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -33,7 +32,7 @@ const OfficerCard: React.FC<OfficerCardProps> = ({ officer }) => {
             <CardTitle className="text-lg font-bold text-police-dark">{officer.name}</CardTitle>
             <CardDescription className="flex items-center text-gray-600">
               <Shield className="h-4 w-4 mr-1 inline" />
-              {officer.rank} • Badge #{officer.badge}
+              {officer.rank || 'Police Officer'} • Badge #{officer.badgeNumber}
             </CardDescription>
           </div>
         </div>
@@ -42,7 +41,7 @@ const OfficerCard: React.FC<OfficerCardProps> = ({ officer }) => {
         <div className="flex flex-col space-y-2 text-sm text-gray-700 mb-4">
           <div className="flex items-center">
             <Phone className="h-4 w-4 mr-2 text-police" />
-            <span>{officer.phone}</span>
+            <span>{officer.contact}</span>
           </div>
           <div className="flex items-center">
             <Mail className="h-4 w-4 mr-2 text-police" />
@@ -53,13 +52,11 @@ const OfficerCard: React.FC<OfficerCardProps> = ({ officer }) => {
         </div>
         
         <div className="mt-2">
-          <p className="text-xs text-gray-500 mb-1">Specialization:</p>
+          <p className="text-xs text-gray-500 mb-1">Department:</p>
           <div className="flex flex-wrap gap-1">
-            {officer.specialization.map((spec, index) => (
-              <Badge key={index} variant="outline" className="text-xs">
-                {spec}
-              </Badge>
-            ))}
+            <Badge variant="outline" className="text-xs">
+              {officer.department}
+            </Badge>
           </div>
         </div>
       </CardContent>

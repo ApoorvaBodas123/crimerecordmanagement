@@ -74,11 +74,14 @@ export interface EmergencyAlert {
 }
 
 export interface User {
-  id: string;
-  userId: string;
+  _id: string;
   name: string;
   email: string;
-  role: 'admin' | 'police' | 'citizen';
-  badgeNumber?: string;
-  department?: string;
+  role: 'police' | 'admin';
+  badgeNumber: string;
+  department: string;
+  phoneNumber: string;
+  isActive: boolean;
+  lastLogin?: Date;
+  createdAt: Date;
 }

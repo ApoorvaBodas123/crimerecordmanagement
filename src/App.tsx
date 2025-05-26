@@ -15,6 +15,7 @@ import AboutPage from '@/pages/AboutPage';
 import SosPage from '@/pages/SosPage';
 import PoliceDashboard from '@/pages/PoliceDashboard';
 import ProfilePage from '@/components/ProfilePage';
+import PoliceDirectory from '@/pages/PoliceDirectory';
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
@@ -46,8 +47,22 @@ const App = () => {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/sos" element={<SosPage />} />
+            <Route
+              path="/about"
+              element={
+                <PrivateRoute>
+                  <AboutPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/sos"
+              element={
+                <PrivateRoute>
+                  <SosPage />
+                </PrivateRoute>
+              }
+            />
             <Route
               path="/crimes"
               element={
@@ -80,7 +95,22 @@ const App = () => {
                 </PrivateRoute>
               }
             />
-            <Route path="/profile" element={<ProfilePage />} />
+            <Route
+              path="/police-directory"
+              element={
+                <PrivateRoute>
+                  <PoliceDirectory />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute>
+                  <ProfilePage />
+                </PrivateRoute>
+              }
+            />
           </Routes>
           <Toaster position="top-right" />
         </DataProvider>

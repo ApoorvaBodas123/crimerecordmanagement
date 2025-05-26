@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
@@ -16,21 +16,9 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const NavLink: React.FC<{ to: string, children: React.ReactNode }> = ({ to, children }) => {
-    const isActive = location.pathname === to;
-    
-    return (
-      <Link
-        to={to}
-        className={`px-3 py-2 rounded-md text-sm font-medium ${
-          isActive
-            ? 'bg-police-dark text-white'
-            : 'text-white hover:bg-police-light hover:text-white'
-        }`}
-      >
-        {children}
-      </Link>
-    );
+  const handleNavigation = (path: string) => {
+    setMobileMenuOpen(false);
+    navigate(path);
   };
 
   const handleLogout = () => {
@@ -43,31 +31,91 @@ const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <Link to={user ? "/crimes" : "/"} className="flex-shrink-0 flex items-center">
+            <button 
+              onClick={() => handleNavigation(user ? "/crimes" : "/")}
+              className="flex-shrink-0 flex items-center bg-transparent border-none p-0"
+            >
               <Shield className="h-8 w-8 text-white" />
               <span className="ml-2 text-white text-lg font-bold">Civic Eye Guardian</span>
-            </Link>
+            </button>
             
             <div className="hidden md:block ml-10">
               <div className="flex items-baseline space-x-4">
                 {user ? (
                   <>
-                    <NavLink to="/crimes">Crimes</NavLink>
-                    <NavLink to="/about">About</NavLink>
-                    <NavLink to="/sos">SOS</NavLink>
+                    <button
+                      onClick={() => handleNavigation('/crimes')}
+                      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                        location.pathname === '/crimes'
+                          ? 'bg-police-dark text-white'
+                          : 'text-white hover:bg-police-light hover:text-white'
+                      }`}
+                    >
+                      Crimes
+                    </button>
+                    <button
+                      onClick={() => handleNavigation('/about')}
+                      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                        location.pathname === '/about'
+                          ? 'bg-police-dark text-white'
+                          : 'text-white hover:bg-police-light hover:text-white'
+                      }`}
+                    >
+                      About
+                    </button>
+                    <button
+                      onClick={() => handleNavigation('/sos')}
+                      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                        location.pathname === '/sos'
+                          ? 'bg-police-dark text-white'
+                          : 'text-white hover:bg-police-light hover:text-white'
+                      }`}
+                    >
+                      SOS
+                    </button>
+                    <button
+                      onClick={() => handleNavigation('/police-directory')}
+                      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                        location.pathname === '/police-directory'
+                          ? 'bg-police-dark text-white'
+                          : 'text-white hover:bg-police-light hover:text-white'
+                      }`}
+                    >
+                      Police Directory
+                    </button>
                     {user && (user.role.toLowerCase() === 'police' || user.role.toLowerCase() === 'admin') && (
-                      <Link
-                        to="/dashboard"
-                        className="text-white hover:bg-police-light px-3 py-2 rounded-md text-sm font-medium"
+                      <button
+                        onClick={() => handleNavigation('/dashboard')}
+                        className={`text-white hover:bg-police-light px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                          location.pathname === '/dashboard' ? 'bg-police-dark' : ''
+                        }`}
                       >
                         Dashboard
-                      </Link>
+                      </button>
                     )}
                   </>
                 ) : (
                   <>
-                    <NavLink to="/">Home</NavLink>
-                    <NavLink to="/about">About</NavLink>
+                    <button
+                      onClick={() => handleNavigation('/')}
+                      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                        location.pathname === '/'
+                          ? 'bg-police-dark text-white'
+                          : 'text-white hover:bg-police-light hover:text-white'
+                      }`}
+                    >
+                      Home
+                    </button>
+                    <button
+                      onClick={() => handleNavigation('/about')}
+                      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                        location.pathname === '/about'
+                          ? 'bg-police-dark text-white'
+                          : 'text-white hover:bg-police-light hover:text-white'
+                      }`}
+                    >
+                      About
+                    </button>
                   </>
                 )}
               </div>
@@ -97,15 +145,15 @@ const Navbar: React.FC = () => {
                 <div className="space-x-2">
                   <Button 
                     className="bg-police-dark text-white hover:bg-police"
-                    asChild
+                    onClick={() => handleNavigation('/login')}
                   >
-                    <Link to="/login">Login</Link>
+                    Login
                   </Button>
                   <Button 
                     className="bg-police-dark text-white hover:bg-police"
-                    asChild
+                    onClick={() => handleNavigation('/register')}
                   >
-                    <Link to="/register">Register</Link>
+                    Register
                   </Button>
                 </div>
               )}
@@ -129,53 +177,53 @@ const Navbar: React.FC = () => {
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {user ? (
               <>
-                <Link
-                  to="/crimes"
-                  className="text-white hover:bg-police-light block px-3 py-2 rounded-md text-base font-medium"
-                  onClick={() => setMobileMenuOpen(false)}
+                <button
+                  onClick={() => handleNavigation('/crimes')}
+                  className="w-full text-left text-white hover:bg-police-light block px-3 py-2 rounded-md text-base font-medium"
                 >
                   Crime Records
-                </Link>
-                <Link
-                  to="/about"
-                  className="text-white hover:bg-police-light block px-3 py-2 rounded-md text-base font-medium"
-                  onClick={() => setMobileMenuOpen(false)}
+                </button>
+                <button
+                  onClick={() => handleNavigation('/about')}
+                  className="w-full text-left text-white hover:bg-police-light block px-3 py-2 rounded-md text-base font-medium"
                 >
                   About
-                </Link>
-                <Link
-                  to="/sos"
-                  className="text-white hover:bg-police-light block px-3 py-2 rounded-md text-base font-medium"
-                  onClick={() => setMobileMenuOpen(false)}
+                </button>
+                <button
+                  onClick={() => handleNavigation('/sos')}
+                  className="w-full text-left text-white hover:bg-police-light block px-3 py-2 rounded-md text-base font-medium"
                 >
                   SOS Alerts
-                </Link>
+                </button>
+                <button
+                  onClick={() => handleNavigation('/police-directory')}
+                  className="w-full text-left text-white hover:bg-police-light block px-3 py-2 rounded-md text-base font-medium"
+                >
+                  Police Directory
+                </button>
                 {user && (user.role.toLowerCase() === 'police' || user.role.toLowerCase() === 'admin') && (
-                  <Link
-                    to="/dashboard"
-                    className="text-white hover:bg-police-light block px-3 py-2 rounded-md text-base font-medium"
-                    onClick={() => setMobileMenuOpen(false)}
+                  <button
+                    onClick={() => handleNavigation('/dashboard')}
+                    className="w-full text-left text-white hover:bg-police-light block px-3 py-2 rounded-md text-base font-medium"
                   >
                     Dashboard
-                  </Link>
+                  </button>
                 )}
               </>
             ) : (
               <>
-                <Link
-                  to="/"
-                  className="text-white hover:bg-police-light block px-3 py-2 rounded-md text-base font-medium"
-                  onClick={() => setMobileMenuOpen(false)}
+                <button
+                  onClick={() => handleNavigation('/')}
+                  className="w-full text-left text-white hover:bg-police-light block px-3 py-2 rounded-md text-base font-medium"
                 >
                   Home
-                </Link>
-                <Link
-                  to="/about"
-                  className="text-white hover:bg-police-light block px-3 py-2 rounded-md text-base font-medium"
-                  onClick={() => setMobileMenuOpen(false)}
+                </button>
+                <button
+                  onClick={() => handleNavigation('/about')}
+                  className="w-full text-left text-white hover:bg-police-light block px-3 py-2 rounded-md text-base font-medium"
                 >
                   About
-                </Link>
+                </button>
               </>
             )}
           </div>
@@ -198,20 +246,18 @@ const Navbar: React.FC = () => {
               </div>
             ) : (
               <div className="px-2 space-y-1">
-                <Link
-                  to="/login"
-                  className="block text-white hover:bg-police-light px-3 py-2 rounded-md text-base font-medium"
-                  onClick={() => setMobileMenuOpen(false)}
+                <button
+                  onClick={() => handleNavigation('/login')}
+                  className="w-full text-left block text-white hover:bg-police-light px-3 py-2 rounded-md text-base font-medium"
                 >
                   Login
-                </Link>
-                <Link
-                  to="/register"
-                  className="block text-white hover:bg-police-light px-3 py-2 rounded-md text-base font-medium"
-                  onClick={() => setMobileMenuOpen(false)}
+                </button>
+                <button
+                  onClick={() => handleNavigation('/register')}
+                  className="w-full text-left block text-white hover:bg-police-light px-3 py-2 rounded-md text-base font-medium"
                 >
                   Register
-                </Link>
+                </button>
               </div>
             )}
           </div>

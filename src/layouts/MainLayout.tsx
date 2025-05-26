@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -15,9 +14,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   
   return (
     <div className="flex flex-col min-h-screen">
-      {emergencyAlerts.length > 0 && <AlertBanner alerts={emergencyAlerts} />}
-      <Navbar />
-      <main className="flex-grow">
+      <div className="sticky top-0 z-50">
+        {emergencyAlerts.length > 0 && <AlertBanner alerts={emergencyAlerts} />}
+        <Navbar />
+      </div>
+      <main className="flex-grow pt-16">
         {children}
       </main>
       <Footer />

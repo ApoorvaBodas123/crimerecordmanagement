@@ -7,6 +7,7 @@ import crimeRoutes from './routes/crimes.js';
 import officerRoutes from './routes/officerRoutes.js';
 import sosRoutes from './routes/sos.js';
 import contactRoutes from './routes/contact.js';
+import userRoutes from './routes/userRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -35,6 +36,7 @@ app.use('/api/crimes', crimeRoutes);
 app.use('/api/officers', officerRoutes);
 app.use('/api/sos', sosRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/users', userRoutes);
 
 // Root route
 app.get('/', (req, res) => {
