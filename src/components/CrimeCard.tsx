@@ -116,27 +116,27 @@ const CrimeCard: React.FC<CrimeCardProps> = ({ crime, onDelete }) => {
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <p className="text-sm text-gray-600">Type: {crime.type}</p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-white-600">Type: {crime.type}</p>
+            <p className="text-sm text-white-600">
               Location: {getLocationDisplay(crime.location)}
             </p>
-            <p className="text-sm text-gray-600">Severity: {crime.severity}</p>
-            <p className="text-sm text-gray-600">Status: {crime.status}</p>
+            <p className="text-sm text-white-600">Severity: {crime.severity}</p>
+            <p className="text-sm text-white-600">Status: {crime.status}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-white-600">
               Reported by: {typeof crime.reportedBy === 'string' ? crime.reportedBy : crime.reportedBy?.name || 'Anonymous'}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-white-600">
               Date: {new Date(crime.createdAt).toLocaleDateString()}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-white-600">
               Time of Occurrence: {new Date(crime.timeOfOccurrence).toLocaleString()}
             </p>
           </div>
         </div>
         <div className="mt-4">
-          <p className="text-sm text-gray-600">Description:</p>
+          <p className="text-sm text-white-600">Description:</p>
           <p className="text-sm">{crime.description}</p>
         </div>
       </CardContent>

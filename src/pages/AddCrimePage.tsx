@@ -7,7 +7,22 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Location } from '@/models/types';
+import { Location, CrimeCategory, CrimeSeverity, CrimeTool } from '@/models/types';
+
+interface FormData {
+  title: string;
+  description: string;
+  type: CrimeCategory;
+  location: Location;
+  severity: CrimeSeverity;
+  victim: {
+    name: string;
+    contact: string;
+    description: string;
+  };
+  toolUsed: CrimeTool;
+  timeOfOccurrence: string;
+}
 
 const AddCrimePage = () => {
   const navigate = useNavigate();
@@ -15,22 +30,22 @@ const AddCrimePage = () => {
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  const [formData, setFormData] = React.useState({
+  const [formData, setFormData] = React.useState<FormData>({
     title: '',
     description: '',
-    type: '',
+    type: 'theft',
     location: {
-      type: 'Point' as const,
-      coordinates: [0, 0] as [number, number],
+      type: 'Point',
+      coordinates: [0, 0],
       address: ''
     },
-    severity: '',
+    severity: 'low',
     victim: {
       name: '',
       contact: '',
       description: ''
     },
-    toolUsed: '',
+    toolUsed: 'weapon',
     timeOfOccurrence: new Date().toISOString().slice(0, 16)
   });
 
@@ -103,7 +118,7 @@ const AddCrimePage = () => {
         
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+            <label className="block text-sm font-medium text-white-700 mb-1">Title</label>
             <Input
               name="title"
               value={formData.title}
@@ -114,7 +129,7 @@ const AddCrimePage = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label className="block text-sm font-medium text-white-700 mb-1">Description</label>
             <Textarea
               name="description"
               value={formData.description}
@@ -126,7 +141,7 @@ const AddCrimePage = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+            <label className="block text-sm font-medium text-white-700 mb-1">Location</label>
             <Input
               name="location"
               value={formData.location.address}
@@ -138,10 +153,10 @@ const AddCrimePage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+              <label className="block text-sm font-medium text-white-700 mb-1">Type</label>
               <Select
                 value={formData.type}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, type: value }))}
+                onValueChange={(value: CrimeCategory) => setFormData(prev => ({ ...prev, type: value }))}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select crime type" />
@@ -158,10 +173,10 @@ const AddCrimePage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Severity</label>
+              <label className="block text-sm font-medium text-white-700 mb-1">Severity</label>
               <Select
                 value={formData.severity}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, severity: value }))}
+                onValueChange={(value: CrimeSeverity) => setFormData(prev => ({ ...prev, severity: value }))}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select severity" />
@@ -178,10 +193,10 @@ const AddCrimePage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Tool Used</label>
+              <label className="block text-sm font-medium text-white-700 mb-1">Tool Used</label>
               <Select
                 value={formData.toolUsed}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, toolUsed: value }))}
+                onValueChange={(value: CrimeTool) => setFormData(prev => ({ ...prev, toolUsed: value }))}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select tool used" />
@@ -198,7 +213,7 @@ const AddCrimePage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Time of Occurrence</label>
+              <label className="block text-sm font-medium text-white-700 mb-1">Time of Occurrence</label>
               <Input
                 type="datetime-local"
                 name="timeOfOccurrence"
@@ -210,10 +225,10 @@ const AddCrimePage = () => {
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900">Victim Information</h3>
+            <h3 className="text-lg font-medium text-white-900">Victim Information</h3>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+              <label className="block text-sm font-medium text-white-700 mb-1">Name</label>
               <Input
                 name="victim.name"
                 value={formData.victim.name}
@@ -224,7 +239,7 @@ const AddCrimePage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Contact</label>
+              <label className="block text-sm font-medium text-white-700 mb-1">Contact</label>
               <Input
                 name="victim.contact"
                 value={formData.victim.contact}
@@ -235,7 +250,7 @@ const AddCrimePage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <label className="block text-sm font-medium text-white-700 mb-1">Description</label>
               <Textarea
                 name="victim.description"
                 value={formData.victim.description}

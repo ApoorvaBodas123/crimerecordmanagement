@@ -29,7 +29,7 @@ const PoliceDirectory: React.FC = () => {
           <input
             type="text"
             placeholder="Search by name or badge number..."
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black focus:border-transparent"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -40,7 +40,7 @@ const PoliceDirectory: React.FC = () => {
             <p className="text-gray-500">No officers found matching your search criteria.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
             {filteredUsers.map((user) => (
               <OfficerCard
                 key={user._id}

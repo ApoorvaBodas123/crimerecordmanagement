@@ -30,7 +30,7 @@ const OfficerCard: React.FC<OfficerCardProps> = ({ officer }) => {
           </Avatar>
           <div>
             <CardTitle className="text-lg font-bold text-police-dark">{officer.name}</CardTitle>
-            <CardDescription className="flex items-center text-gray-600">
+            <CardDescription className="flex items-center text-white-600">
               <Shield className="h-4 w-4 mr-1 inline" />
               {officer.rank || 'Police Officer'} • Badge #{officer.badgeNumber}
             </CardDescription>
@@ -38,7 +38,7 @@ const OfficerCard: React.FC<OfficerCardProps> = ({ officer }) => {
         </div>
       </CardHeader>
       <CardContent className="pb-2 flex-grow">
-        <div className="flex flex-col space-y-2 text-sm text-gray-700 mb-4">
+        <div className="flex flex-col space-y-2 text-sm text-white-700 mb-4">
           <div className="flex items-center">
             <Phone className="h-4 w-4 mr-2 text-police" />
             <span>{officer.contact}</span>
